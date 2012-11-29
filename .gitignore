@@ -3,3 +3,6 @@ bin/*
 
 #Git
 .gitignore~
+
+#Personal scripts
+move
