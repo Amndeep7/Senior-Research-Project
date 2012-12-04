@@ -7,7 +7,9 @@ import java.net.*;
 /**
  * Simple demonstration for an Applet <-> Servlet communication.
  */
-public class EchoApplet extends Applet {
+public class SimulationApplet extends Applet {
+	private static final long serialVersionUID = 3170574749472554461L; // make eclipse be quiet
+	
 	private TextField inputField = new TextField();
 	private TextField outputField = new TextField();
 	private TextArea exceptionArea = new TextArea();
@@ -20,7 +22,7 @@ public class EchoApplet extends Applet {
 		setLayout(new GridBagLayout());
 
 		// add title		
-		Label title = new Label("Echo Applet", Label.CENTER);
+		Label title = new Label("Simulation Applet", Label.CENTER);
 		title.setFont(new Font("SansSerif", Font.BOLD, 14));
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -76,11 +78,11 @@ public class EchoApplet extends Applet {
 	private URLConnection getServletConnection()
 		throws MalformedURLException, IOException {
 
-		// Connection zum Servlet öffnen
-		URL urlServlet = new URL(getCodeBase(), "echo");
+		// Open a connection to the servlet
+		URL urlServlet = new URL(getCodeBase(), "simulation");
 		URLConnection con = urlServlet.openConnection();
 
-		// konfigurieren
+		// Configuration
 		con.setDoInput(true);
 		con.setDoOutput(true);
 		con.setUseCaches(false);
@@ -88,7 +90,7 @@ public class EchoApplet extends Applet {
 			"Content-Type",
 			"application/x-java-serialized-object");
 
-		// und zurückliefern
+		// and return
 		return con;
 	}
 
@@ -120,7 +122,7 @@ public class EchoApplet extends Applet {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			exceptionArea.setText(ex.toString());
+			exceptionArea.setText(ex.toString() + "hello");
 		}
 	}
 }

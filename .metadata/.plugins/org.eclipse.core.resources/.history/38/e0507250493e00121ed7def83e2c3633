@@ -6,7 +6,9 @@ import javax.servlet.http.*;
 /**
  * Simple demonstration for an Applet <-> Servlet communication.
  */
-public class EchoServlet extends HttpServlet {
+public class SimulationServlet extends HttpServlet {
+	private static final long serialVersionUID = 6938369357587229915L; //make eclipse be quiet
+
 	/**
 	 * Get a String-object from the applet and send it back.
 	 */
