@@ -1,0 +1,10 @@
+#!/bin/bash
+
+javac SimulationApplet/SimulationApplet.java
+javac -cp SimulationServlet/libs/servlet-api.jar SimulationServlet/SimulationServlet.java
+
+sudo cp SimulationApplet/*.class /var/lib/tomcat7/webapps/simulation/
+sudo cp SimulationServlet/*.class /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp index.html /var/lib/tomcat7/webapps/simulation/
+
+sudo service tomcat7 restart
