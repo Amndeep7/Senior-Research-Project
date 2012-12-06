@@ -6,3 +6,8 @@ bin/*
 
 #Personal scripts
 move
+
+#Eclipse
+.metadata/
+.metadata/*
+.metadata/.*

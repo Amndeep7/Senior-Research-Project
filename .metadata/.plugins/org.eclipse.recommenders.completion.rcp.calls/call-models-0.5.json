@@ -1,0 +1,7 @@
+{
+  "/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar": {
+    "location": "/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar\u0027. Skipped."
+  }
+}

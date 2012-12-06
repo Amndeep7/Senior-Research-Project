@@ -34,7 +34,6 @@ public class SimulationServlet extends HttpServlet {
 			oos.close();
 
 		} catch (Exception e) {
-			System.exit(1);
 			e.printStackTrace();
 		}
 	}

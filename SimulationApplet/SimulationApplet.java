@@ -54,13 +54,26 @@ public class SimulationApplet extends Applet {
 		c.anchor = GridBagConstraints.EAST;
 		add(new Label("Output:", Label.RIGHT), c);
 		c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1.0;
 		add(outputField, c);
+		Button flipButton = new Button("Flip");
+		c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		add(flipButton, c);
+		flipButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String text = outputField.getText();
+				String newOut = "";
+				for (String part : text.split(" ")) {
+				    newOut += new StringBuffer(part).reverse().toString() + " ";
+				}
+				outputField.setText(newOut);
+			}
+		});
 		outputField.setEditable(false);
 
-		// add exception label and non-editable textarea
+		// add exception label and non-editable text area
 		c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.EAST;
 		add(new Label("Exception:", Label.RIGHT), c);
@@ -121,9 +134,8 @@ public class SimulationApplet extends Applet {
 			outputField.setText(result);
 
 		} catch (Exception ex) {
-			System.exit(1);
 			ex.printStackTrace();
-			exceptionArea.setText(ex.toString() + "hello");
+			exceptionArea.setText(ex.toString());
 		}
 	}
 }
