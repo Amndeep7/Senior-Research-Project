@@ -6,10 +6,6 @@ Simulation/shared/*.class
 #Git
 .gitignore~
 
-#Personal scripts
-refresh
-prepare.py
-
 #Eclipse
 .metadata/
 .metadata/*

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#preparing .java files
+python3 prepare.py pre applet/Applet.java servlet/Servlet.java shared/*.java
+
+#compiling
+javac applet/Applet.java
+javac -cp servlet/libs/servlet-api.jar servlet/Servlet.java
+javac shared/*.java
+
+#fixing .java files
+python3 prepare.py post applet/Applet.java servlet/Servlet.java shared/*.java
+
+#copying to tomcat
+#applet
+sudo cp applet/*.class /var/lib/tomcat7/webapps/simulation/
+#servlet
+sudo cp servlet/*.class /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+#shared
+sudo cp shared/*.class /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp shared/*.class /var/lib/tomcat7/webapps/simulation/
+#website
+sudo cp index.html /var/lib/tomcat7/webapps/simulation/
+
+#start up tomcat (default is off)
+sudo service tomcat7 start
+
+#view website
+chromium-browser localhost:8080/simulation/index.html
+
+#shutdown tomcat (return to default)
+sudo service tomcat7 stop
