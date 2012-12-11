@@ -1,0 +1,20 @@
+public class Car
+{
+	private int xPos, yPos, width, height;
+	public Car(int x, int y, int w, int h)
+	{
+		xPos = x;
+		yPos = y;
+		width = w;
+		setHeight(h);
+	}
+	public int getHeight()
+	{
+		return height;
+	}
+	public void setHeight(int height)
+	{
+		this.height = height;
+	}
+	
+}

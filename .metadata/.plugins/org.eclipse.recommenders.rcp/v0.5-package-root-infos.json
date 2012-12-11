@@ -104,6 +104,19 @@
     "javaRuntime": true
   },
   {
+    "symbolicName": "javax.servlet",
+    "version": {
+      "major": 3,
+      "minor": 0,
+      "micro": 0,
+      "qualifier": "v201103241327"
+    },
+    "jarFileFingerprint": "45d44c1a90c810563b83a2c3128ffc525e8b7b03",
+    "jarFileModificationDate": "2012-12-04T15:25:37-05:00",
+    "location": "/home/amn/Desktop/School/Senior-Research-Project/Simulation/servlet/libs/servlet-api.jar",
+    "javaRuntime": false
+  },
+  {
     "symbolicName": "jre",
     "version": {
       "major": 1,

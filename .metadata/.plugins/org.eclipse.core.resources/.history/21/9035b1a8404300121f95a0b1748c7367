@@ -1,0 +1,13 @@
+from sys import argv
+
+def main():
+    if argv[0] == "pre":
+        pass
+    elif argv[0] == "post":
+        pass
+    else:
+        raise Exception(argv[0] + " is not an option")
+        
+
+if __name__ == '__main__':
+    main()

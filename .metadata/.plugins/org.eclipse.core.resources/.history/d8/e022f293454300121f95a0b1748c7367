@@ -1,0 +1,50 @@
+from sys import argv
+from os import unlink
+
+def main():
+	if len(argv) < 3:
+		raise Exception("Insufficient number of arguments")
+
+	if argv[1] == "pre":
+		for index in range(2, len(argv)):
+
+				# reads in the program
+				f = open(argv[2], "r")
+				program = f.read()
+				f.close()
+				
+			# makes a copy of the program to recover from later
+			f = open(argv[2] + ".copy", "w")
+			f.write(program)
+			f.close();
+
+			# removes package statement
+			program = program[program.index(";") + 4:]
+
+			# writes out the modified program
+			f = open(argv[2], "w")
+			f.write(program)
+			f.close()
+
+				elif argv[1] == "post":
+					for index in range(2, len(argv)):
+\t\t\t
+\t\t\t# reads in the original program
+\t\t\tf = open(argv[2] + ".copy", "r")
+\t\t\tprogram = f.read()
+\t\t\tf.close()
+\t\t\t
+\t\t\t# copies over modified program
+\t\t\tf = open(argv[2], "w")
+\t\t\tf.write(program)
+\t\t\tf.close()
+\t\t\t
+\t\t\t# deletes copy of original program
+\t\t\tunlink(argv[2] + ".copy")
+\t\t
+\telse:
+\t\traise Exception(argv[1] + " is not an option")
+\t\t
+
+if __name__ == '__main__':
+\tmain()

@@ -1,0 +1,8 @@
+package applet;
+
+import javax.swing.JApplet;
+
+public class Test extends JApplet
+{
+
+}
