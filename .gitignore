@@ -1,7 +1,7 @@
 #Binaries
-applet/*.class
-servlet/*.class
-shared/*.class
+Simulation/applet/*.class
+Simulation/servlet/*.class
+Simulation/shared/*.class
 
 #Git
 .gitignore~
@@ -14,3 +14,4 @@ prepare.py
 .metadata/
 .metadata/*
 .metadata/.*
+
