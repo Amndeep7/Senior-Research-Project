@@ -1,12 +1,14 @@
 #Binaries
-
-*.class
+applet/*.class
+servlet/*.class
+shared/*.class
 
 #Git
 .gitignore~
 
 #Personal scripts
-move
+refresh
+prepare.py
 
 #Eclipse
 .metadata/
