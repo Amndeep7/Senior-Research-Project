@@ -34,8 +34,15 @@ public class Servlet extends HttpServlet
 			InputStream in = request.getInputStream();
 			ObjectInputStream inputFromApplet = new ObjectInputStream(in);
 			String echo = (String) inputFromApplet.readObject();
+			
+			String newOut = "";
+			for(String part : echo.split(" "))
+			{
+				newOut += new StringBuffer(part).reverse().toString() + " ";
+			}
+			echo = newOut;
 
-			// echo it to the applet
+			// reverse echo it to the applet
 			OutputStream outstr = response.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(outstr);
 			oos.writeObject(echo);
