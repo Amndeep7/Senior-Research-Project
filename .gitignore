@@ -10,4 +10,5 @@ Simulation/shared/*.class
 .metadata/
 .metadata/*
 .metadata/.*
-
+Simulation/java.policy.applet
+Simulation/applet/java.policy.applet
