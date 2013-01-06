@@ -1,11 +1,15 @@
 package applet;
 
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -14,13 +18,20 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Timer;
+
+import shared.Car;
+import shared.Facing;
 
 /**
  * Simple demonstration for an Applet <-> Servlet communication.
@@ -30,20 +41,36 @@ public class Applet extends JApplet
 	private static final long serialVersionUID = 3170574749472554461L; // make eclipse be quiet
 
 	private JPanel panel;
-
-	private JTextField inputField;
-	private JTextField outputField;
-	private JTextArea exceptionArea;
+	
+	private JPanel map;
+	private int framex = 1000, framey = 1000;
+	private BufferedImage myImage;
+	private Graphics2D myBuffer;
+	
+	private ArrayList<Car> cars;
+	
+	private Timer drawer;
 
 	/**
 	 * Setup the GUI.
 	 */
 	public void init()
 	{
+		cars = new ArrayList<Car>();
+		cars.add(new Car(50, 50, 50, 50, 10, Facing.EAST, false));
+		
+		map = new JPanel();
+		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
+		myBuffer = myImage.createGraphics();
+		
+		myBuffer.setColor(Color.black);
+		myBuffer.fillRect(0, 0, framex, framey);
+		add(map);
+		
+		drawer = new Timer(100, new DrawerTimer());
+		drawer.start();
+		
 		panel = new JPanel();
-		inputField = new JTextField();
-		outputField = new JTextField();
-		exceptionArea = new JTextArea();
 
 		// set new layout
 		panel.setLayout(new GridBagLayout());
@@ -58,65 +85,59 @@ public class Applet extends JApplet
 		c.insets = new Insets(5, 5, 5, 5);
 		panel.add(title, c);
 
-		// add input JLabel, field and send JButton
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.EAST;
-		panel.add(new JLabel("Input:", JLabel.RIGHT), c);
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1.0;
-		panel.add(inputField, c);
-		JButton sendButton = new JButton("Send");
+		JButton addCarButton = new JButton("Add car");
 		c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		panel.add(sendButton, c);
-		sendButton.addActionListener(new ActionListener()
+		panel.add(addCarButton, c);
+		addCarButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				onSendData();
+				
+				//onSendData();
 			}
 		});
-
-		// add output JLabel and non-editable field
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.EAST;
-		panel.add(new JLabel("Output:", JLabel.RIGHT), c);
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1.0;
-		panel.add(outputField, c);
-		JButton flipButton = new JButton("Flip");
-		c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		panel.add(flipButton, c);
-		flipButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				String text = outputField.getText();
-				String newOut = "";
-				for(String part : text.split(" "))
-				{
-					newOut += new StringBuffer(part).reverse().toString() + " ";
-				}
-				outputField.setText(newOut);
-			}
-		});
-		outputField.setEditable(false);
-
-		// add exception JLabel and non-editable text area
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.EAST;
-		panel.add(new JLabel("Exception:", JLabel.RIGHT), c);
-		c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weighty = 1;
-		c.fill = GridBagConstraints.BOTH;
-		panel.add(exceptionArea, c);
-		exceptionArea.setEditable(false);
 
 		add(panel);
+	}
+	
+	public void paintComponent(Graphics g)
+	{
+		myBuffer.fillRect(0, 0, framex, framey);
+		
+		for(Car c : cars)
+		{
+			c.draw(myBuffer, null);
+		}
+		
+		g.drawImage(myImage, 0, 0, framex, framey, 0, 0, map.getWidth(), map.getHeight(), null);
+	}
+	
+	public BufferedImage getCarPicture()
+	{
+		JOptionPane.showMessageDialog(null, "in get car picture");
+		URL imageURL = getClass().getResource("/shared/resources/pictures/car.png");
+		BufferedImage image = null;
+		try
+		{
+			image = ImageIO.read(imageURL);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			System.out.println("Failed to load image");
+			System.exit(1);
+		}
+		
+		return image;
+	}
+	
+	private class DrawerTimer implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			map.repaint();
+		}
 	}
 
 	/**
@@ -142,7 +163,7 @@ public class Applet extends JApplet
 	/**
 	 * Send the inputField data to the servlet and show the result in the outputField.
 	 */
-	private void onSendData()
+	/*private void onSendData()
 	{
 		try
 		{
@@ -173,5 +194,5 @@ public class Applet extends JApplet
 			ex.printStackTrace();
 			exceptionArea.setText(ex.toString());
 		}
-	}
+	}*/
 }

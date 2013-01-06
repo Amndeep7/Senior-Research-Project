@@ -5,15 +5,19 @@ import java.awt.image.BufferedImage;
 
 public class Car
 {
-	private int xPos, yPos, width, height;
-	private BufferedImage image;
+	private int xPos, yPos, width, height, speed;
+	private boolean image;
+	
+	private Facing facing;
 
-	public Car(int x, int y, int w, int h, BufferedImage i)
+	public Car(int x, int y, int w, int h, int s, Facing f, boolean i)
 	{
 		setXPos(x);
 		setYPos(y);
 		setWidth(w);
 		setHeight(h);
+		setSpeed(s);
+		facing = f;
 		image = i;
 	}
 
@@ -58,8 +62,31 @@ public class Car
 		this.yPos = yPos;
 	}
 
-	public void draw(Graphics2D g)
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public Facing getFacing() {
+		return facing;
+	}
+
+	public void setFacing(Facing facing) {
+		this.facing = facing;
+	}
+
+	public void draw(Graphics2D g, BufferedImage i)
 	{
-		g.drawImage(image, xPos, yPos, xPos+width, yPos + height, 0, 0, image.getWidth(), image.getHeight(), null);
+		if(image)
+		{
+			g.fillRect(getXPos(), getYPos(), getWidth(), getHeight());
+		}
+		else
+		{
+			g.drawImage(i, xPos, yPos, xPos+width, yPos + height, 0, 0, i.getWidth(), i.getHeight(), null);
+		}
 	}
 }
