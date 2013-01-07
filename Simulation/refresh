@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #compiling
-javac applet/Applet.java
-javac -cp servlet/libs/servlet-api.jar servlet/Servlet.java
+javac applet/*.java
+javac -cp servlet/libs/servlet-api.jar servlet/*.java
 javac shared/*.java
 
 #copying to tomcat
