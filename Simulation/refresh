@@ -2,7 +2,7 @@
 
 #compiling
 javac applet/*.java
-javac -cp servlet/libs/servlet-api.jar servlet/*.java
+javac -cp servlet/libs/servlet-api.jar -sourcepath .:shared/ servlet/*.java
 javac shared/*.java
 
 #copying to tomcat

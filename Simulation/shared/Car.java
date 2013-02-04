@@ -2,26 +2,27 @@ package shared;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Car
+public class Car implements Drawable, Serializable
 {
-	private int xPos, yPos, width, height, speed;
-	private boolean image;
-	
-	private Facing facing;
+	private static final long serialVersionUID = -8819358195585385588L;
 
-	public Car(int x, int y, int w, int h, int s, Facing f, boolean i)
+	private int xPos, yPos, width, height, speed;
+
+	private double angle;
+
+	public Car(int x, int y, int w, int h, int s, double a)
 	{
 		setXPos(x);
 		setYPos(y);
 		setWidth(w);
 		setHeight(h);
 		setSpeed(s);
-		facing = f;
-		image = i;
+		angle = a;
 	}
 
-	//getters and setters
+	// getters and setters
 	public int getHeight()
 	{
 		return height;
@@ -62,31 +63,39 @@ public class Car
 		this.yPos = yPos;
 	}
 
-	public int getSpeed() {
+	public int getSpeed()
+	{
 		return speed;
 	}
 
-	public void setSpeed(int speed) {
+	public void setSpeed(int speed)
+	{
 		this.speed = speed;
 	}
 
-	public Facing getFacing() {
-		return facing;
+	public double getFacing()
+	{
+		return angle;
 	}
 
-	public void setFacing(Facing facing) {
-		this.facing = facing;
+	public void setFacing(double facing)
+	{
+		this.angle = facing;
 	}
 
 	public void draw(Graphics2D g, BufferedImage i)
 	{
-		if(image)
-		{
-			g.fillRect(getXPos(), getYPos(), getWidth(), getHeight());
-		}
-		else
-		{
-			g.drawImage(i, xPos, yPos, xPos+width, yPos + height, 0, 0, i.getWidth(), i.getHeight(), null);
-		}
+		g.drawImage(i, getXPos(), getYPos(), getXPos() + getWidth(), getYPos() + getHeight(), 0, 0, i.getWidth(), i.getHeight(), null);
+	}
+
+	public void move()
+	{
+		xPos += Math.cos(angle);
+		yPos += Math.sin(angle);
+	}
+
+	public String toString()
+	{
+		return "Car:" + getXPos() + "/" + getYPos();
 	}
 }

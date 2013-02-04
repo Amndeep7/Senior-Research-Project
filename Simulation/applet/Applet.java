@@ -1,15 +1,11 @@
 package applet;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -20,18 +16,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import shared.Car;
-import shared.Facing;
+import shared.Command;
 
 /**
  * Simple demonstration for an Applet <-> Servlet communication.
@@ -40,103 +33,71 @@ public class Applet extends JApplet
 {
 	private static final long serialVersionUID = 3170574749472554461L; // make eclipse be quiet
 
-	private JPanel panel;
-	
-	private JPanel map;
-	private int framex = 1000, framey = 1000;
-	private BufferedImage myImage;
-	private Graphics2D myBuffer;
-	
-	private ArrayList<Car> cars;
-	
+	private JPanel interaction;
+
+	public JTextArea errors;
+
+	private SimulationView simulation;
+
 	private Timer drawer;
+
+	public int postmethodcall = 0;
+	public int repaintmethodcall = 0;
+	public int paintcompmethodcall = 0;
+	public int initmethodcall = 0;
 
 	/**
 	 * Setup the GUI.
 	 */
 	public void init()
 	{
-		cars = new ArrayList<Car>();
-		cars.add(new Car(50, 50, 50, 50, 10, Facing.EAST, false));
-		
-		map = new JPanel();
-		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
-		myBuffer = myImage.createGraphics();
-		
-		myBuffer.setColor(Color.black);
-		myBuffer.fillRect(0, 0, framex, framey);
-		add(map);
-		
+		setLayout(new BorderLayout());
+
+		simulation = new SimulationView(this);
+		simulation.setPreferredSize(new Dimension(800, 300));
+
+		add(simulation, BorderLayout.CENTER);
+
 		drawer = new Timer(100, new DrawerTimer());
 		drawer.start();
-		
-		panel = new JPanel();
+		simulation.repaint();
+		repaintmethodcall += 1;
 
-		// set new layout
-		panel.setLayout(new GridBagLayout());
+		interaction = new JPanel();
 
 		// add title
 		JLabel title = new JLabel("Simulation Applet", JLabel.CENTER);
 		title.setFont(new Font("SansSerif", Font.BOLD, 14));
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 5, 5, 5);
-		panel.add(title, c);
+		interaction.add(title);
 
 		JButton addCarButton = new JButton("Add car");
-		c = new GridBagConstraints();
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		panel.add(addCarButton, c);
+		interaction.add(addCarButton);
 		addCarButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				
-				//onSendData();
+				// onSendData();
 			}
 		});
 
-		add(panel);
+		add(interaction, BorderLayout.SOUTH);
+
+		errors = new JTextArea();
+		errors.setEditable(false);
+		add(errors, BorderLayout.NORTH);
+
+
+		initmethodcall += 1;
+		errors.setText("init called: " + initmethodcall);
 	}
-	
-	public void paintComponent(Graphics g)
-	{
-		myBuffer.fillRect(0, 0, framex, framey);
-		
-		for(Car c : cars)
-		{
-			c.draw(myBuffer, null);
-		}
-		
-		g.drawImage(myImage, 0, 0, framex, framey, 0, 0, map.getWidth(), map.getHeight(), null);
-	}
-	
-	public BufferedImage getCarPicture()
-	{
-		JOptionPane.showMessageDialog(null, "in get car picture");
-		URL imageURL = getClass().getResource("/shared/resources/pictures/car.png");
-		BufferedImage image = null;
-		try
-		{
-			image = ImageIO.read(imageURL);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			System.out.println("Failed to load image");
-			System.exit(1);
-		}
-		
-		return image;
-	}
-	
+
 	private class DrawerTimer implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
 		{
-			map.repaint();
+			repaintmethodcall += 1;
+			//errors.setText("1 Post method call: " + postmethodcall + " Repaint method call: " + repaintmethodcall + " Paint component method call: " + paintcompmethodcall);
+			simulation.repaint();
 		}
 	}
 
@@ -163,36 +124,63 @@ public class Applet extends JApplet
 	/**
 	 * Send the inputField data to the servlet and show the result in the outputField.
 	 */
-	/*private void onSendData()
+
+	public ArrayList<Object> interactWithServlet(Command c, Object... input)
 	{
+		postmethodcall += 1;
+		//errors.setText("2 Post method call: " + postmethodcall + " Repaint method call: " + repaintmethodcall + " Paint component method call: " + paintcompmethodcall);
+
+		ArrayList<Object> results = new ArrayList<Object>();
+
 		try
 		{
-			// get input data for sending
-			String input = inputField.getText();
-
-			// send data to the servlet
 			URLConnection con = getServletConnection();
-			OutputStream outstream = con.getOutputStream();
+			OutputStream outstream = con.getOutputStream(); // error location
 			ObjectOutputStream oos = new ObjectOutputStream(outstream);
-			oos.writeObject(input);
+
+			oos.writeObject(c);
 			oos.flush();
+
+			//errors.setText("Does input exist? " + input.length);
+
+			for(Object o : input)
+			{
+				oos.writeObject(o);
+				oos.flush();
+			}
+
 			oos.close();
 
 			// receive result from servlet
 			InputStream instr = con.getInputStream();
 			ObjectInputStream inputFromServlet = new ObjectInputStream(instr);
-			String result = (String) inputFromServlet.readObject();
+
+			int size = (Integer) inputFromServlet.readObject();
+			//errors.setText("Value of size is " + size);
+			if(size < 0)
+				throw new Command.CommandUnknownException(c + " is not a known command");
+
+			for(int x = 0; x < size; x++)
+				results.add(inputFromServlet.readObject());
+
+			//errors.setText(postmethodcall + " Do results exist? " + results.get(0));
+
 			inputFromServlet.close();
+
+			//errors.setText(postmethodcall + " Can I leave?");
+
 			instr.close();
 
-			// show result
-			outputField.setText(result);
-
+			//errors.setText(postmethodcall + " You're sure?");
 		}
-		catch(Exception ex)
+		catch(IOException | ClassNotFoundException e)
 		{
-			ex.printStackTrace();
-			exceptionArea.setText(ex.toString());
+			e.printStackTrace();
+			errors.setText(e.toString());
 		}
-	}*/
+
+		//errors.setText(postmethodcall + " You're not pulling my leg are you?");
+
+		return results;
+	}
 }
