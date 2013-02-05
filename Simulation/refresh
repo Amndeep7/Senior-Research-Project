@@ -13,10 +13,11 @@ sudo cp -r servlet/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
 #shared
 sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
 sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/
-#website
-sudo cp index.html /var/lib/tomcat7/webapps/simulation/
 #resources
 sudo cp -r shared/resources/ /var/lib/tomcat7/webapps/simulation/shared/
+#website
+sudo cp index.html /var/lib/tomcat7/webapps/simulation/
+sudo cp web.xml /var/lib/tomcat7/webapps/simulation/WEB-INF/
 
 #start up tomcat (default is off)
 sudo service tomcat7 start
