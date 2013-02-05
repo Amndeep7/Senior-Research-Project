@@ -1,0 +1,23 @@
+<!DOCTYPE web-app 
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <!-- General description of my web application -->
+    <display-name>Simulation Servlet</display-name>
+    <description>
+    Simulation Servlet
+    </description>
+
+    <!-- define servlets and mapping -->
+    <servlet>
+        <servlet-name>simulation</servlet-name>
+        <servlet-class>servlet.Servlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>simulation</servlet-name>
+        <url-pattern>/simulation</url-pattern>
+    </servlet-mapping>
+
+</web-app>
