@@ -3,7 +3,6 @@ package applet;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -21,14 +20,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import shared.Command;
 
-/**
- * Simple demonstration for an Applet <-> Servlet communication.
- */
 public class Applet extends JApplet
 {
 	private static final long serialVersionUID = 3170574749472554461L; // make eclipse be quiet
@@ -40,11 +35,6 @@ public class Applet extends JApplet
 	private SimulationView simulation;
 
 	private Timer drawer;
-
-	public int postmethodcall = 0;
-	public int repaintmethodcall = 0;
-	public int paintcompmethodcall = 0;
-	public int initmethodcall = 0;
 
 	/**
 	 * Setup the GUI.
@@ -60,8 +50,6 @@ public class Applet extends JApplet
 
 		drawer = new Timer(100, new DrawerTimer());
 		drawer.start();
-		simulation.repaint();
-		repaintmethodcall += 1;
 
 		interaction = new JPanel();
 
@@ -76,7 +64,7 @@ public class Applet extends JApplet
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				// onSendData();
+				interactWithServlet(Command.ADD_CAR);
 			}
 		});
 
@@ -85,18 +73,12 @@ public class Applet extends JApplet
 		errors = new JTextArea();
 		errors.setEditable(false);
 		add(errors, BorderLayout.NORTH);
-
-
-		initmethodcall += 1;
-		errors.setText("init called: " + initmethodcall);
 	}
 
 	private class DrawerTimer implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
 		{
-			repaintmethodcall += 1;
-			//errors.setText("1 Post method call: " + postmethodcall + " Repaint method call: " + repaintmethodcall + " Paint component method call: " + paintcompmethodcall);
 			simulation.repaint();
 		}
 	}
@@ -127,9 +109,6 @@ public class Applet extends JApplet
 
 	public ArrayList<Object> interactWithServlet(Command c, Object... input)
 	{
-		postmethodcall += 1;
-		//errors.setText("2 Post method call: " + postmethodcall + " Repaint method call: " + repaintmethodcall + " Paint component method call: " + paintcompmethodcall);
-
 		ArrayList<Object> results = new ArrayList<Object>();
 
 		try
@@ -140,8 +119,6 @@ public class Applet extends JApplet
 
 			oos.writeObject(c);
 			oos.flush();
-
-			//errors.setText("Does input exist? " + input.length);
 
 			for(Object o : input)
 			{
@@ -156,30 +133,20 @@ public class Applet extends JApplet
 			ObjectInputStream inputFromServlet = new ObjectInputStream(instr);
 
 			int size = (Integer) inputFromServlet.readObject();
-			//errors.setText("Value of size is " + size);
 			if(size < 0)
 				throw new Command.CommandUnknownException(c + " is not a known command");
 
 			for(int x = 0; x < size; x++)
 				results.add(inputFromServlet.readObject());
 
-			//errors.setText(postmethodcall + " Do results exist? " + results.get(0));
-
 			inputFromServlet.close();
-
-			//errors.setText(postmethodcall + " Can I leave?");
-
 			instr.close();
-
-			//errors.setText(postmethodcall + " You're sure?");
 		}
 		catch(IOException | ClassNotFoundException e)
 		{
 			e.printStackTrace();
 			errors.setText(e.toString());
 		}
-
-		//errors.setText(postmethodcall + " You're not pulling my leg are you?");
 
 		return results;
 	}

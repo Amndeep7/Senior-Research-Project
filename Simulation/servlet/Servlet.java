@@ -16,9 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import shared.Command;
 
-/**
- * Simple demonstration for an Applet <-> Servlet communication.
- */
 public class Servlet extends HttpServlet
 {
 	private static final long serialVersionUID = 6938369357587229915L; // make eclipse be quiet
@@ -34,8 +31,29 @@ public class Servlet extends HttpServlet
 		LOGGER = Logger.getLogger(Servlet.class.getName());
 		LOGGER.addHandler(new ConsoleHandler());
 
+		LOGGER.log(Level.INFO, "entered constructor and created logger");
 
 		simulation = new Simulation();
+
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				while(true)
+				{
+					try
+					{
+						Thread.sleep(100);
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+						LOGGER.log(Level.WARNING, "Sleep interrupted");
+					}
+					simulation.run();
+				}
+			}
+		}).start();
 
 		LOGGER.log(Level.INFO, "exited constructor");
 	}
