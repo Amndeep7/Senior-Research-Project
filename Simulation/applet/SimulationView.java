@@ -19,7 +19,7 @@ public class SimulationView extends JPanel
 {
 	private static final long serialVersionUID = -8869054371150649099L;
 
-	private int framex = 1600, framey = 600;
+	private int framex = 1280, framey = 720;
 	private BufferedImage myImage;
 	private Graphics2D myBuffer;
 
@@ -32,7 +32,7 @@ public class SimulationView extends JPanel
 		applet = a;
 
 		images = new HashMap<String, BufferedImage>();
-		images.put("car", getCarPicture());
+		images.put("car", getPicture("car"));
 
 		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
 		myBuffer = myImage.createGraphics();
@@ -41,9 +41,9 @@ public class SimulationView extends JPanel
 		myBuffer.fillRect(0, 0, framex, framey);
 	}
 
-	public BufferedImage getCarPicture()
+	public BufferedImage getPicture(String name)
 	{
-		URL imageURL = getClass().getResource("/shared/resources/pictures/car.png");
+		URL imageURL = getClass().getResource("/shared/resources/pictures/" + name  + ".png");
 		BufferedImage image = null;
 		try
 		{
@@ -52,8 +52,7 @@ public class SimulationView extends JPanel
 		catch(IOException e)
 		{
 			e.printStackTrace();
-			System.out.println("Failed to load image");
-			System.exit(1);
+			applet.errors.setText("Failed to load image " + e.getMessage());
 		}
 
 		return image;
@@ -66,16 +65,13 @@ public class SimulationView extends JPanel
 		myBuffer.fillRect(0, 0, framex, framey);
 
 		ArrayList<Car> cars = new ArrayList<Car>();
-		ArrayList<Object> cars2 = new ArrayList<Object>();
+		ArrayList<Object> carsAsObjects = new ArrayList<Object>();
 
 		ArrayList<Object> results = applet.interactWithServlet(Command.GET_CARS);
-		cars2 = (ArrayList<Object>) results.get(0);
+		carsAsObjects = (ArrayList<Object>) results.get(0);
 
-		for(Object o : cars2)
-			cars.add((Car) o);
-
-		myBuffer.setColor(Color.black);
-		myBuffer.drawString("" + applet.getCodeBase(), 10, 10);
+		for(Object car : carsAsObjects)
+			cars.add((Car) car);
 
 		for(Car c : cars)
 		{
