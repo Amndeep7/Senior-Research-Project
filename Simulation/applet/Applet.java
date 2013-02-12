@@ -28,7 +28,7 @@ public class Applet extends JApplet
 
 	private JPanel interaction;
 
-	public JTextArea errors;
+	JTextArea errors;
 
 	private SimulationView simulation;
 
