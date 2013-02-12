@@ -1,10 +1,8 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,11 +16,13 @@ import shared.Command;
 
 public class Servlet extends HttpServlet
 {
-	private static final long serialVersionUID = 6938369357587229915L; // make eclipse be quiet
+	private static final long serialVersionUID = 6938369357587229915L;
 
 	private static Logger LOGGER;
 
 	private Simulation simulation;
+
+	private int simulationSpeed = 100;
 
 	public Servlet()
 	{
@@ -30,8 +30,6 @@ public class Servlet extends HttpServlet
 
 		LOGGER = Logger.getLogger(Servlet.class.getName());
 		LOGGER.addHandler(new ConsoleHandler());
-
-		LOGGER.log(Level.INFO, "entered constructor and created logger");
 
 		simulation = new Simulation();
 
@@ -43,77 +41,111 @@ public class Servlet extends HttpServlet
 				{
 					try
 					{
-						Thread.sleep(100);
+						Thread.sleep(simulationSpeed);
 					}
 					catch(InterruptedException e)
 					{
 						e.printStackTrace();
-						LOGGER.log(Level.WARNING, "Sleep interrupted");
+						LOGGER.warning("Simulation sleep thread interrupted " + e.getMessage());
 					}
 					simulation.run();
+					LOGGER.finest("Completed a step-through of the simulation");
 				}
 			}
 		}).start();
 
-		LOGGER.log(Level.INFO, "exited constructor");
+		LOGGER.fine("Created servlet and started simulation");
 	}
 
-	/**
-	 * Get a String-object from the applet and send it back.
-	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	public void closeInput(ObjectInputStream ob)
 	{
-		LOGGER.log(Level.INFO, "entered method");
+		try
+		{
+			ob.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable to close input stream " + e.getMessage());
+		}
+	}
 
+	public void closeOutput(ObjectOutputStream outputToApplet)
+	{
+		try
+		{
+			outputToApplet.flush();
+			outputToApplet.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable to close output stream " + e.getMessage());
+		}
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException
+	{
 		response.setContentType("application/x-java-serialized-object");
 
-		InputStream in = request.getInputStream();
-		ObjectInputStream inputFromApplet = new ObjectInputStream(in);
-
-		LOGGER.log(Level.INFO, "created input streams");
+		ObjectInputStream inputFromApplet = null;
+		try
+		{
+			inputFromApplet = new ObjectInputStream(request.getInputStream());
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable get input stream " + e.getMessage());
+		}
 
 		Command c = null;
 		try
 		{
 			c = (Command) inputFromApplet.readObject();
 		}
-		catch(ClassNotFoundException e1)
+		catch(ClassNotFoundException | IOException e)
 		{
-			e1.printStackTrace();
+			e.printStackTrace();
+			LOGGER.warning("Problem with reading in the command " + e.getMessage());
 		}
 
-		LOGGER.log(Level.INFO, "identified command as " + c);
+		LOGGER.fine("Received " + c + " command");
 
-		OutputStream outstr = response.getOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(outstr);
+		ObjectOutputStream outputToApplet = null;
+		try
+		{
+			outputToApplet = new ObjectOutputStream(response.getOutputStream());
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable make output stream " + e.getMessage());
+		}
 
 		LOGGER.log(Level.INFO, "created output streams");
 
+		try
+		{
 		switch(c)
 		{
-			case GET_CARS:
-			{
-				LOGGER.log(Level.INFO, "getting cars");
-
-				oos.writeObject(new Integer("1"));
-				oos.writeObject(simulation.getCars());
-
-				oos.flush();
-				oos.close();
-
-				break;
-			}
 			case ADD_CAR:
 			{
 				LOGGER.log(Level.INFO, "adding cars");
 
 				simulation.addCar();
 				// return true to signify success
-				oos.writeObject(new Integer("1"));
-				oos.writeObject(true);
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(true);
 
-				oos.flush();
-				oos.close();
+				break;
+			}
+			case GET_CARS:
+			{
+				LOGGER.log(Level.INFO, "getting cars");
+
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(simulation.getCars());
 
 				break;
 			}
@@ -122,15 +154,21 @@ public class Servlet extends HttpServlet
 				LOGGER.log(Level.INFO, "command not found: " + c);
 
 				// signify failure
-				oos.writeObject(new Integer("-1"));
-
-				oos.flush();
-				oos.close();
+				outputToApplet.writeObject(new Integer("-1"));
 
 				break;
 			}
 		}
-
-		LOGGER.log(Level.INFO, "leaving method");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable make output stream " + e.getMessage());
+		}
+		finally
+		{
+			closeInput(inputFromApplet);
+			closeOutput(outputToApplet);
+		}
 	}
 }
