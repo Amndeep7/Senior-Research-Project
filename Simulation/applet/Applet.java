@@ -6,10 +6,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -44,23 +42,27 @@ public class Applet extends JApplet
 		setLayout(new BorderLayout());
 
 		simulation = new SimulationView(this);
-		simulation.setPreferredSize(new Dimension(800, 300));
+		simulation.setPreferredSize(new Dimension(800, 600));
 
 		add(simulation, BorderLayout.CENTER);
 
 		drawer = new Timer(100, new DrawerTimer());
 		drawer.start();
 
-		interaction = new JPanel();
-
 		// add title
 		JLabel title = new JLabel("Simulation Applet", JLabel.CENTER);
 		title.setFont(new Font("SansSerif", Font.BOLD, 14));
-		interaction.add(title);
+		add(title, BorderLayout.NORTH);
 
-		JButton addCarButton = new JButton("Add car");
-		interaction.add(addCarButton);
-		addCarButton.addActionListener(new ActionListener()
+		errors = new JTextArea();
+		errors.setEditable(false);
+		errors.setPreferredSize(new Dimension(100, 600));
+		add(errors, BorderLayout.WEST);
+
+		interaction = new JPanel();
+
+		interaction.add(new JButton("Add car"));
+		((JButton) (interaction.getComponents()[interaction.getComponents().length-1])).addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -69,10 +71,6 @@ public class Applet extends JApplet
 		});
 
 		add(interaction, BorderLayout.SOUTH);
-
-		errors = new JTextArea();
-		errors.setEditable(false);
-		add(errors, BorderLayout.NORTH);
 	}
 
 	private class DrawerTimer implements ActionListener
@@ -103,10 +101,6 @@ public class Applet extends JApplet
 		return con;
 	}
 
-	/**
-	 * Send the inputField data to the servlet and show the result in the outputField.
-	 */
-
 	public ArrayList<Object> interactWithServlet(Command c, Object... input)
 	{
 		ArrayList<Object> results = new ArrayList<Object>();
@@ -114,23 +108,21 @@ public class Applet extends JApplet
 		try
 		{
 			URLConnection con = getServletConnection();
-			OutputStream outstream = con.getOutputStream(); // error location
-			ObjectOutputStream oos = new ObjectOutputStream(outstream);
 
-			oos.writeObject(c);
-			oos.flush();
+			ObjectOutputStream outputToServlet = new ObjectOutputStream(con.getOutputStream());
+
+			outputToServlet.writeObject(c);
+			outputToServlet.flush();
 
 			for(Object o : input)
 			{
-				oos.writeObject(o);
-				oos.flush();
+				outputToServlet.writeObject(o);
+				outputToServlet.flush();
 			}
 
-			oos.close();
+			outputToServlet.close();
 
-			// receive result from servlet
-			InputStream instr = con.getInputStream();
-			ObjectInputStream inputFromServlet = new ObjectInputStream(instr);
+			ObjectInputStream inputFromServlet = new ObjectInputStream(con.getInputStream());
 
 			int size = (Integer) inputFromServlet.readObject();
 			if(size < 0)
@@ -140,7 +132,6 @@ public class Applet extends JApplet
 				results.add(inputFromServlet.readObject());
 
 			inputFromServlet.close();
-			instr.close();
 		}
 		catch(IOException | ClassNotFoundException e)
 		{
