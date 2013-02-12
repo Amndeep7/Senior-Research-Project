@@ -22,7 +22,7 @@ public class Servlet extends HttpServlet
 
 	private Simulation simulation;
 
-	private int simulationSpeed = 100;
+	private int simulationSpeed = 50;
 
 	public Servlet()
 	{
