@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;
@@ -34,11 +36,16 @@ public class Applet extends JApplet
 
 	private Timer drawer;
 
+	private static Logger LOGGER;
+
 	/**
 	 * Setup the GUI.
 	 */
 	public void init()
 	{
+		LOGGER = Logger.getLogger(Applet.class.getName());
+		LOGGER.addHandler(new ConsoleHandler());
+
 		setLayout(new BorderLayout());
 
 		simulation = new SimulationView(this);
@@ -78,6 +85,7 @@ public class Applet extends JApplet
 		public void actionPerformed(ActionEvent e)
 		{
 			simulation.repaint();
+			LOGGER.finest("Completed a drawing of the simulation");
 		}
 	}
 
