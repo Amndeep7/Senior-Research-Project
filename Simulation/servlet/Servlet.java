@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import shared.Command;
+import shared.Communication;
 
 public class Servlet extends HttpServlet
 {
@@ -33,26 +34,28 @@ public class Servlet extends HttpServlet
 
 		simulation = new Simulation();
 
-		new Thread(new Runnable()
+		final Thread t = new Thread(new Runnable()
 		{
 			public void run()
 			{
-				while(true)
+				while(!Thread.currentThread().isInterrupted())
 				{
 					try
 					{
-						Thread.sleep(simulationSpeed);
+						Thread.currentThread().sleep(simulationSpeed);
 					}
 					catch(InterruptedException e)
 					{
 						e.printStackTrace();
 						LOGGER.warning("Simulation sleep thread interrupted " + e.getMessage());
+						break;
 					}
 					simulation.run();
 					LOGGER.finest("Completed a step-through of the simulation");
 				}
 			}
-		}).start();
+		});
+		t.start();
 
 		LOGGER.fine("Created servlet and started simulation");
 	}
@@ -129,11 +132,56 @@ public class Servlet extends HttpServlet
 		{
 		switch(c)
 		{
+			case LOG:
+			{
+				LOGGER.log(Level.INFO, "logging message from applet");
+
+				Level level = null;
+				try
+				{
+					level = (Level) inputFromApplet.readObject();
+				}
+				catch(ClassNotFoundException | IOException e)
+				{
+					e.printStackTrace();
+					LOGGER.warning("Problem with reading in the logging level from the applet " + e.getMessage());
+
+					// signify failure
+					outputToApplet.writeObject(new Integer("-1"));
+					outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging level failed");
+
+					break;
+				}
+
+				String message = null;
+				try
+				{
+					message = (String) inputFromApplet.readObject();
+				}
+				catch(ClassNotFoundException | IOException e)
+				{
+					e.printStackTrace();
+					LOGGER.warning("Problem with reading in the message from the applet " + e.getMessage());
+
+					// signify failure
+					outputToApplet.writeObject(new Integer("-1"));
+					outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging message failed");
+
+					break;
+				}
+
+				LOGGER.log(level, message);
+
+				// return true to signify success
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(true);
+			}
 			case ADD_CAR:
 			{
 				LOGGER.log(Level.INFO, "adding cars");
 
 				simulation.addCar();
+
 				// return true to signify success
 				outputToApplet.writeObject(new Integer("1"));
 				outputToApplet.writeObject(true);
@@ -155,6 +203,7 @@ public class Servlet extends HttpServlet
 
 				// signify failure
 				outputToApplet.writeObject(new Integer("-1"));
+				outputToApplet.writeObject(Communication.COMMAND_UNKNOWN_ERROR);
 
 				break;
 			}

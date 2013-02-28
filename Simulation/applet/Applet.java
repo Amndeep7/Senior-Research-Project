@@ -12,8 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;
@@ -36,16 +35,11 @@ public class Applet extends JApplet
 
 	private Timer drawer;
 
-	private static Logger LOGGER;
-
 	/**
 	 * Setup the GUI.
 	 */
 	public void init()
 	{
-		LOGGER = Logger.getLogger(Applet.class.getName());
-		LOGGER.addHandler(new ConsoleHandler());
-
 		setLayout(new BorderLayout());
 
 		simulation = new SimulationView(this);
@@ -85,7 +79,7 @@ public class Applet extends JApplet
 		public void actionPerformed(ActionEvent e)
 		{
 			simulation.repaint();
-			LOGGER.finest("Completed a drawing of the simulation");
+			interactWithServlet(Command.LOG, Level.FINEST, "Repainted screen");
 		}
 	}
 
@@ -134,7 +128,7 @@ public class Applet extends JApplet
 
 			int size = (Integer) inputFromServlet.readObject();
 			if(size < 0)
-				throw new Command.CommandUnknownException(c + " is not a known command");
+				throw new Error(inputFromServlet.readObject().toString());
 
 			for(int x = 0; x < size; x++)
 				results.add(inputFromServlet.readObject());
