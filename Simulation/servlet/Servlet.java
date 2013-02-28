@@ -30,6 +30,7 @@ public class Servlet extends HttpServlet
 		super();
 
 		LOGGER = Logger.getLogger(Servlet.class.getName());
+		LOGGER.setLevel(Level.FINEST);
 		LOGGER.addHandler(new ConsoleHandler());
 
 		simulation = new Simulation();
