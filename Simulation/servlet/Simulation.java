@@ -11,7 +11,7 @@ public class Simulation
 	public Simulation()
 	{
 		cars = new ArrayList<Car>();
-		addCar();
+		//addCar();
 	}
 
 	public ArrayList<Car> getCars()

@@ -30,29 +30,33 @@ public class Servlet extends HttpServlet
 		super();
 
 		LOGGER = Logger.getLogger(Servlet.class.getName());
-		LOGGER.setLevel(Level.FINEST);
+		LOGGER.setLevel(Level.ALL);
 		LOGGER.addHandler(new ConsoleHandler());
 
 		simulation = new Simulation();
+
+		LOGGER.fine(System.currentTimeMillis() + " Created simulation");
 
 		final Thread t = new Thread(new Runnable()
 		{
 			public void run()
 			{
+				LOGGER.fine(System.currentTimeMillis() + " Entered run");
 				while(!Thread.currentThread().isInterrupted())
 				{
 					try
 					{
-						Thread.currentThread().sleep(simulationSpeed);
+						Thread.sleep(simulationSpeed);
 					}
 					catch(InterruptedException e)
 					{
 						e.printStackTrace();
 						LOGGER.warning("Simulation sleep thread interrupted " + e.getMessage());
-						break;
+						Thread.currentThread().interrupt();
 					}
+					LOGGER.fine("Began a step-through of the simulation");
 					simulation.run();
-					LOGGER.finest("Completed a step-through of the simulation");
+					LOGGER.fine("Completed a step-through of the simulation");
 				}
 			}
 		});
