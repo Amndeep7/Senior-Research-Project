@@ -180,6 +180,8 @@ public class Servlet extends HttpServlet
 				// return true to signify success
 				outputToApplet.writeObject(new Integer("1"));
 				outputToApplet.writeObject(true);
+
+				break;
 			}
 			case ADD_CAR:
 			{
