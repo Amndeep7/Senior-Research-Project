@@ -1,0 +1,10 @@
+jar cmfv0 experimentation/manifest_supplement.txt jar_experimentation.jar experimentation/JustAClass.class experimentation/resources/text/text.txt
+
+c = want to create jar file
+m = want to modify the manifest by adding the lines from the given text file
+f = name of resultant jar file
+v = verbal output
+0 = no compression
+
+arguments have to be in the order of arguments that are using them ->
+manifest supplement, name of file, files to be included in the jar
