@@ -35,13 +35,13 @@ public class Servlet extends HttpServlet
 
 		simulation = new Simulation();
 
-		LOGGER.fine(System.currentTimeMillis() + " Created simulation");
+		LOGGER.fine("Created simulation");
 
 		final Thread t = new Thread(new Runnable()
 		{
 			public void run()
 			{
-				LOGGER.fine(System.currentTimeMillis() + " Entered run");
+				LOGGER.fine("Entered run");
 				while(!Thread.currentThread().isInterrupted())
 				{
 					try

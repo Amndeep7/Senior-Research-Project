@@ -67,8 +67,8 @@ public class Applet extends JApplet
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				//interactWithServlet(Command.ADD_CAR);
 				interactWithServlet(Command.LOG, Level.INFO, "I want to add a car");
+				interactWithServlet(Command.ADD_CAR);
 			}
 		});
 
