@@ -7,6 +7,7 @@ Simulation/experimentation/*.class
 #Personal
 Simulation/experimentation
 Simulation/experimentation/*
+Simulation/experimentation/text/*
 
 #Git
 .gitignore~
