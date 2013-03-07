@@ -4,6 +4,10 @@ Simulation/servlet/*.class
 Simulation/shared/*.class
 Simulation/experimentation/*.class
 
+#Personal
+Simulation/experimentation
+Simulation/experimentation/*
+
 #Git
 .gitignore~
 
