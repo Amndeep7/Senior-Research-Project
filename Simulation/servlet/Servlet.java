@@ -3,6 +3,8 @@ package servlet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +26,9 @@ public class Servlet extends HttpServlet
 	private Simulation simulation;
 
 	private int simulationSpeed = 50;
+	private Timer timer;
+
+	private final Thread t;
 
 	public Servlet()
 	{
@@ -37,7 +42,8 @@ public class Servlet extends HttpServlet
 
 		LOGGER.fine("Created simulation");
 
-		final Thread t = new Thread(new Runnable()
+
+		t = new Thread(new Runnable()
 		{
 			public void run()
 			{
@@ -61,8 +67,37 @@ public class Servlet extends HttpServlet
 			}
 		});
 		t.start();
+		/*
+		timer = new Timer();
+		timer.schedule(new RunSimulation(), 1000, simulationSpeed);
+		*/
+
 
 		LOGGER.fine("Created servlet and started simulation");
+	}
+/*
+	private class RunSimulation extends TimerTask
+	{
+		public void run()
+		{
+			simulation.run();
+		}
+	}
+*/
+	public void destroy()
+	{
+		super.destroy();
+
+		//timer.cancel();
+		try
+		{
+			t.join();
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable to end simulation thread " + e.getMessage());
+		}
 	}
 
 	public void closeInput(ObjectInputStream ob)
