@@ -58,6 +58,8 @@ public class Applet extends JApplet
 		errors = new JTextArea();
 		errors.setEditable(false);
 		errors.setPreferredSize(new Dimension(100, 600));
+		errors.setLineWrap(true);
+		errors.setWrapStyleWord(true);
 		add(errors, BorderLayout.WEST);
 
 		interaction = new JPanel();
@@ -68,7 +70,7 @@ public class Applet extends JApplet
 			public void actionPerformed(ActionEvent e)
 			{
 				interactWithServlet(Command.LOG, Level.INFO, "I want to add a car");
-				interactWithServlet(Command.ADD_CAR);
+				interactWithServlet(example.shared.Command.ADD_CAR);
 			}
 		});
 
@@ -104,7 +106,7 @@ public class Applet extends JApplet
 		return con;
 	}
 
-	public ArrayList<Object> interactWithServlet(Command c, Object... input)
+	public ArrayList<Object> interactWithServlet(Object command, Object... input)
 	{
 		ArrayList<Object> results = new ArrayList<Object>();
 
@@ -114,7 +116,7 @@ public class Applet extends JApplet
 
 			ObjectOutputStream outputToServlet = new ObjectOutputStream(con.getOutputStream());
 
-			outputToServlet.writeObject(c);
+			outputToServlet.writeObject(command);
 			outputToServlet.flush();
 
 			for(Object o : input)

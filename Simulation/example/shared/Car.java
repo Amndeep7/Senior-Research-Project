@@ -1,8 +1,10 @@
-package shared;
+package example.shared;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+
+import shared.Drawable;
 
 public class Car implements Drawable, Serializable
 {

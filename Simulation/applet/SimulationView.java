@@ -12,8 +12,8 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import shared.Car;
-import shared.Command;
+import example.shared.Car;
+import example.shared.Command;
 
 public class SimulationView extends JPanel
 {

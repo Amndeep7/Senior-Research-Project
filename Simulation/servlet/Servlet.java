@@ -3,8 +3,6 @@ package servlet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +19,7 @@ public class Servlet extends HttpServlet
 {
 	private static final long serialVersionUID = 6938369357587229915L;
 
-	private static Logger LOGGER;
-
-	private Simulation simulation;
-
-	private int simulationSpeed = 50;
-	private Timer timer;
-
-	private final Thread t;
+	protected static Logger LOGGER;
 
 	public Servlet()
 	{
@@ -38,66 +29,7 @@ public class Servlet extends HttpServlet
 		LOGGER.setLevel(Level.ALL);
 		LOGGER.addHandler(new ConsoleHandler());
 
-		simulation = new Simulation();
-
-		LOGGER.fine("Created simulation");
-
-
-		t = new Thread(new Runnable()
-		{
-			public void run()
-			{
-				LOGGER.fine("Entered run");
-				while(!Thread.currentThread().isInterrupted())
-				{
-					try
-					{
-						Thread.sleep(simulationSpeed);
-					}
-					catch(InterruptedException e)
-					{
-						e.printStackTrace();
-						LOGGER.warning("Simulation sleep thread interrupted " + e.getMessage());
-						Thread.currentThread().interrupt();
-					}
-					LOGGER.fine("Began a step-through of the simulation");
-					simulation.run();
-					LOGGER.fine("Completed a step-through of the simulation");
-				}
-			}
-		});
-		t.start();
-		/*
-		timer = new Timer();
-		timer.schedule(new RunSimulation(), 1000, simulationSpeed);
-		*/
-
-
-		LOGGER.fine("Created servlet and started simulation");
-	}
-/*
-	private class RunSimulation extends TimerTask
-	{
-		public void run()
-		{
-			simulation.run();
-		}
-	}
-*/
-	public void destroy()
-	{
-		super.destroy();
-
-		//timer.cancel();
-		try
-		{
-			t.join();
-		}
-		catch(InterruptedException e)
-		{
-			e.printStackTrace();
-			LOGGER.warning("Unable to end simulation thread " + e.getMessage());
-		}
+		LOGGER.fine("Created servlet.Servlet and loggers");
 	}
 
 	public void closeInput(ObjectInputStream ob)
@@ -127,49 +59,15 @@ public class Servlet extends HttpServlet
 		}
 	}
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException
+	public void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command) throws IOException
 	{
-		response.setContentType("application/x-java-serialized-object");
-
-		ObjectInputStream inputFromApplet = null;
-		try
+		if(!(command instanceof Command))
 		{
-			inputFromApplet = new ObjectInputStream(request.getInputStream());
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			LOGGER.warning("Unable get input stream " + e.getMessage());
+			LOGGER.log(Level.SEVERE, "Did not receive shared.Command in doCommand from servlet.Servlet");
+			return;
 		}
 
-		Command c = null;
-		try
-		{
-			c = (Command) inputFromApplet.readObject();
-		}
-		catch(ClassNotFoundException | IOException e)
-		{
-			e.printStackTrace();
-			LOGGER.warning("Problem with reading in the command " + e.getMessage());
-		}
-
-		LOGGER.fine("Received " + c + " command");
-
-		ObjectOutputStream outputToApplet = null;
-		try
-		{
-			outputToApplet = new ObjectOutputStream(response.getOutputStream());
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			LOGGER.warning("Unable make output stream " + e.getMessage());
-		}
-
-		LOGGER.log(Level.INFO, "created output streams");
-
-		try
-		{
+		Command c = (Command) command;
 		switch(c)
 		{
 			case LOG:
@@ -218,27 +116,6 @@ public class Servlet extends HttpServlet
 
 				break;
 			}
-			case ADD_CAR:
-			{
-				LOGGER.log(Level.INFO, "adding cars");
-
-				simulation.addCar();
-
-				// return true to signify success
-				outputToApplet.writeObject(new Integer("1"));
-				outputToApplet.writeObject(true);
-
-				break;
-			}
-			case GET_CARS:
-			{
-				LOGGER.log(Level.INFO, "getting cars");
-
-				outputToApplet.writeObject(new Integer("1"));
-				outputToApplet.writeObject(simulation.getCars());
-
-				break;
-			}
 			default: // as in default response
 			{
 				LOGGER.log(Level.INFO, "command not found: " + c);
@@ -250,11 +127,30 @@ public class Servlet extends HttpServlet
 				break;
 			}
 		}
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException
+	{
+		response.setContentType("application/x-java-serialized-object");
+		ObjectInputStream inputFromApplet = null;
+		ObjectOutputStream outputToApplet = null;
+		try
+		{
+			inputFromApplet = new ObjectInputStream(request.getInputStream());
+			LOGGER.fine("created input streams");
+
+			Object c = inputFromApplet.readObject();
+			LOGGER.fine("Received " + c + " command");
+
+			outputToApplet = new ObjectOutputStream(response.getOutputStream());
+			LOGGER.fine("created output streams");
+
+			doCommand(inputFromApplet, outputToApplet, c);
 		}
-		catch(IOException e)
+		catch(IOException | ClassNotFoundException e)
 		{
 			e.printStackTrace();
-			LOGGER.warning("Unable make output stream " + e.getMessage());
+			LOGGER.warning(e.getMessage());
 		}
 		finally
 		{

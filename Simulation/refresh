@@ -1,29 +1,59 @@
 #!/bin/bash
 
-#compiling
-javac applet/*.java
-javac -cp servlet/libs/servlet-api.jar -sourcepath .:shared/ servlet/*.java
-javac shared/*.java
+#compiling framework
+javac -g -verbose -sourcepath .:shared/:example/* applet/*.java
+javac -g -verbose -cp servlet/libs/servlet-api.jar -sourcepath .:shared/ servlet/*.java
+javac -g -verbose shared/*.java
+#
+
+#compiling my applet/servlet
+javac -g -verbose -sourcepath .:applet/:shared/ example/applet/*.java
+javac -g -verbose -cp servlet/libs/servlet-api.jar -sourcepath .:shared/:servlet/ example/servlet/*.java
+javac -g -verbose -sourcepath .:shared/ example/shared/*.java
+#
 
 #copying to tomcat
+#copying framework to tomcat
 #applet
 sudo cp -r applet/ /var/lib/tomcat7/webapps/simulation/
+#
 #servlet
 sudo cp -r servlet/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+#
 #shared
 sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
 sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/
+#
+#
+#copying my applet/servlet to tomcat
 #resources
 sudo cp -r shared/resources/ /var/lib/tomcat7/webapps/simulation/shared/
+#
 #website
 sudo cp index.html /var/lib/tomcat7/webapps/simulation/
 sudo cp web.xml /var/lib/tomcat7/webapps/simulation/WEB-INF/
+#
+#my applet
+sudo cp -r example/applet/ /var/lib/tomcat7/webapps/simulation/example/
+#
+#my servlet
+sudo cp -r example/servlet/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/example/
+#
+#my shared
+sudo cp -r example/shared/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/example/
+sudo cp -r example/shared/ /var/lib/tomcat7/webapps/simulation/example/
+#
+#
+#
 
 #start up tomcat (default is off)
 sudo service tomcat7 start
+#
 
 #view website
 chromium-browser localhost:8080/simulation/index.html
+#
 
 #shutdown tomcat (return to default)
 sudo service tomcat7 stop
+#
