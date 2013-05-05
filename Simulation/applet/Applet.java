@@ -1,10 +1,6 @@
 package applet;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,78 +8,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.Timer;
-
-import shared.Command;
 
 public class Applet extends JApplet
 {
-	private static final long serialVersionUID = 3170574749472554461L; // make eclipse be quiet
+	private static final long serialVersionUID = 3170574749472554461L;
 
-	private JPanel interaction;
+	protected Dimension size;
 
-	JTextArea errors;
+	protected String error;
 
-	private SimulationView simulation;
-
-	private Timer drawer;
-
-	/**
-	 * Setup the GUI.
-	 */
 	public void init()
 	{
-		setLayout(new BorderLayout());
+		size = getSize();
 
-		simulation = new SimulationView(this);
-		simulation.setPreferredSize(new Dimension(800, 600));
-
-		add(simulation, BorderLayout.CENTER);
-
-		drawer = new Timer(100, new DrawerTimer());
-		drawer.start();
-
-		// add title
-		JLabel title = new JLabel("Simulation Applet", JLabel.CENTER);
-		title.setFont(new Font("SansSerif", Font.BOLD, 14));
-		add(title, BorderLayout.NORTH);
-
-		errors = new JTextArea();
-		errors.setEditable(false);
-		errors.setPreferredSize(new Dimension(100, 600));
-		errors.setLineWrap(true);
-		errors.setWrapStyleWord(true);
-		add(errors, BorderLayout.WEST);
-
-		interaction = new JPanel();
-
-		interaction.add(new JButton("Add car"));
-		((JButton) (interaction.getComponents()[interaction.getComponents().length-1])).addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				interactWithServlet(Command.LOG, Level.INFO, "I want to add a car");
-				interactWithServlet(example.shared.Command.ADD_CAR);
-			}
-		});
-
-		add(interaction, BorderLayout.SOUTH);
+		error = "";
 	}
 
-	private class DrawerTimer implements ActionListener
+	public void setError(String message)
 	{
-		public void actionPerformed(ActionEvent e)
-		{
-			simulation.repaint();
-			interactWithServlet(Command.LOG, Level.FINEST, "Repainted screen");
-		}
+		error = message;
 	}
 
 	/**
@@ -131,17 +76,22 @@ public class Applet extends JApplet
 
 			int size = (Integer) inputFromServlet.readObject();
 			if(size < 0)
-				throw new Error(inputFromServlet.readObject().toString());
-
-			for(int x = 0; x < size; x++)
-				results.add(inputFromServlet.readObject());
+			{
+				error = inputFromServlet.readObject().toString();
+			}
+			else
+			{
+				for(int x = 0; x < size; x++)
+				{
+					results.add(inputFromServlet.readObject());
+				}
+			}
 
 			inputFromServlet.close();
 		}
 		catch(IOException | ClassNotFoundException e)
 		{
-			e.printStackTrace();
-			errors.setText(e.toString());
+			setError(e.getMessage());
 		}
 
 		return results;

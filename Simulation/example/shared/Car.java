@@ -4,9 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
-import shared.Drawable;
-
-public class Car implements Drawable, Serializable
+public class Car implements Serializable
 {
 	private static final long serialVersionUID = -8819358195585385588L;
 

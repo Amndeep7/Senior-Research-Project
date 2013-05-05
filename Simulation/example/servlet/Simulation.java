@@ -24,6 +24,14 @@ public class Simulation
 		cars.add(new Car(50, 50, 100, 100, 10, 0));
 	}
 
+	public void removeCar(int index)
+	{
+		if(0 <= index && index < cars.size())
+		{
+			cars.remove(index);
+		}
+	}
+
 	public void run()
 	{
 		for(Car c : cars)

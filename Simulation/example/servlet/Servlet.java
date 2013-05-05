@@ -111,9 +111,32 @@ public class Servlet extends servlet.Servlet
 
 				break;
 			}
+			case REMOVE_CAR:
+			{
+				LOGGER.log(Level.INFO, "removing cars");
+
+				Integer index = null;
+				try
+				{
+					index = (Integer) inputFromApplet.readObject();
+				}
+				catch(ClassNotFoundException e)
+				{
+					e.printStackTrace();
+					LOGGER.warning("Problem with getting index for removing car " + e.getMessage());
+
+					// signify failure
+					outputToApplet.writeObject(new Integer("-1"));
+					outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging message failed");
+				}
+
+				simulation.removeCar(index);
+
+				break;
+			}
 			default: // as in default response
 			{
-				LOGGER.log(Level.INFO, "command not found: " + c);
+				LOGGER.log(Level.SEVERE, Communication.COMMAND_UNKNOWN_ERROR.toString() + " in example " + c);
 
 				// signify failure
 				outputToApplet.writeObject(new Integer("-1"));

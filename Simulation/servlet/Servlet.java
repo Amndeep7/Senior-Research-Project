@@ -32,15 +32,14 @@ public class Servlet extends HttpServlet
 		LOGGER.fine("Created servlet.Servlet and loggers");
 	}
 
-	public void closeInput(ObjectInputStream ob)
+	public void closeInput(ObjectInputStream inputFromApplet)
 	{
 		try
 		{
-			ob.close();
+			inputFromApplet.close();
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
 			LOGGER.warning("Unable to close input stream " + e.getMessage());
 		}
 	}
@@ -54,7 +53,6 @@ public class Servlet extends HttpServlet
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
 			LOGGER.warning("Unable to close output stream " + e.getMessage());
 		}
 	}
@@ -81,7 +79,6 @@ public class Servlet extends HttpServlet
 				}
 				catch(ClassNotFoundException | IOException e)
 				{
-					e.printStackTrace();
 					LOGGER.warning("Problem with reading in the logging level from the applet " + e.getMessage());
 
 					// signify failure
@@ -149,7 +146,6 @@ public class Servlet extends HttpServlet
 		}
 		catch(IOException | ClassNotFoundException e)
 		{
-			e.printStackTrace();
 			LOGGER.warning(e.getMessage());
 		}
 		finally
