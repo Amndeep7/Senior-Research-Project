@@ -3,6 +3,7 @@ Simulation/applet/*.class
 Simulation/servlet/*.class
 Simulation/shared/*.class
 Simulation/experimentation/*.class
+Simulation/example/*/*.class
 
 #Personal
 Simulation/experimentation

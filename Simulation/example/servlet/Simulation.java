@@ -1,8 +1,8 @@
-package servlet;
+package example.servlet;
 
 import java.util.ArrayList;
 
-import shared.Car;
+import example.shared.Car;
 
 public class Simulation
 {
@@ -22,6 +22,14 @@ public class Simulation
 	public void addCar()
 	{
 		cars.add(new Car(50, 50, 100, 100, 10, 0));
+	}
+
+	public void removeCar(int index)
+	{
+		if(0 <= index && index < cars.size())
+		{
+			cars.remove(index);
+		}
 	}
 
 	public void run()

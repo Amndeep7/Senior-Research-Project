@@ -1,23 +1,43 @@
 #!/bin/bash
 
-#compiling
-javac applet/*.java
-javac -cp servlet/libs/servlet-api.jar -sourcepath .:shared/ servlet/*.java
-javac shared/*.java
+#compiling framework
+javac -g -verbose -sourcepath .:shared/:example/* applet/*.java
+javac -g -verbose -cp servlet/libs/servlet-api.jar -sourcepath .:shared/ servlet/*.java
+javac -g -verbose shared/*.java
+
+#compiling my applet/servlet
+javac -g -verbose -sourcepath .:applet/:shared/ example/applet/*.java
+javac -g -verbose -cp servlet/libs/servlet-api.jar -sourcepath .:shared/:servlet/ example/servlet/*.java
+javac -g -verbose -sourcepath .:shared/ example/shared/*.java
 
 #copying to tomcat
+
+#removing old files but remaking those necessary
+sudo rm -vr /var/lib/tomcat7/webapps/simulation/*
+sudo mkdir -v --parents /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+
+#copying framework to tomcat
 #applet
-sudo cp -r applet/ /var/lib/tomcat7/webapps/simulation/
+sudo cp -av --parents applet /var/lib/tomcat7/webapps/simulation/
 #servlet
-sudo cp -r servlet/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp -av --parents servlet /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
 #shared
-sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
-sudo cp -r shared/ /var/lib/tomcat7/webapps/simulation/
-#resources
-sudo cp -r shared/resources/ /var/lib/tomcat7/webapps/simulation/shared/
+sudo cp -av --parents shared /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp -av --parents shared /var/lib/tomcat7/webapps/simulation/
+
+#copying my applet/servlet to tomcat
 #website
-sudo cp index.html /var/lib/tomcat7/webapps/simulation/
-sudo cp web.xml /var/lib/tomcat7/webapps/simulation/WEB-INF/
+sudo cp -av index.html /var/lib/tomcat7/webapps/simulation/
+sudo cp -av web.xml /var/lib/tomcat7/webapps/simulation/WEB-INF/
+#my applet
+sudo cp -av --parents example/applet /var/lib/tomcat7/webapps/simulation/
+#my servlet
+sudo cp -av --parents example/servlet /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+#my shared
+sudo cp -av --parents example/shared /var/lib/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp -av --parents example/shared /var/lib/tomcat7/webapps/simulation/
+#my resources
+sudo cp -av --parents example/shared/resources /var/lib/tomcat7/webapps/simulation/
 
 #start up tomcat (default is off)
 sudo service tomcat7 start

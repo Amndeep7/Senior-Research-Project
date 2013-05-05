@@ -1,8 +1,6 @@
 package shared;
 
-import java.io.Serializable;
-
-public enum Command implements Serializable
+public enum Command
 {
-	LOG, ADD_CAR, GET_CARS;
+	LOG;
 }
