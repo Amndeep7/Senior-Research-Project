@@ -50,22 +50,22 @@ public class Applet extends applet.Applet
 		add(title, BorderLayout.NORTH);
 
 		interaction = new JPanel();
-		interaction.add(new JButton("Add car"));
+		interaction.add(new JButton("Add boid"));
 		((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				interactWithServlet(Command.LOG, Level.INFO, "I want to add a car");
-				interactWithServlet(example.shared.Command.ADD_CAR);
+				interactWithServlet(Command.LOG, Level.INFO, "I want to add a boid");
+				interactWithServlet(example.shared.Command.ADD_BOID);
 			}
 		});
-		interaction.add(new JButton("Remove car"));
+		interaction.add(new JButton("Remove boid"));
 		((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				interactWithServlet(Command.LOG, Level.INFO, "I want to remove a car");
-				interactWithServlet(example.shared.Command.REMOVE_CAR, new Integer(0));
+				interactWithServlet(Command.LOG, Level.INFO, "I want to remove a boid");
+				interactWithServlet(example.shared.Command.REMOVE_BOID, new Integer(0));
 			}
 		});
 		add(interaction, BorderLayout.SOUTH);

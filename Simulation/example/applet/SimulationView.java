@@ -12,14 +12,15 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import example.shared.Car;
+import example.shared.Boid;
 import example.shared.Command;
+import example.shared.Constants;
 
 public class SimulationView extends JPanel
 {
 	private static final long serialVersionUID = -8869054371150649099L;
 
-	private int framex = 1920, framey = 1080;
+	private int framex = Constants.FRAMEX, framey = Constants.FRAMEY;
 	private BufferedImage myImage;
 	private Graphics2D myBuffer;
 
@@ -32,7 +33,7 @@ public class SimulationView extends JPanel
 		applet = a;
 
 		images = new HashMap<String, BufferedImage>();
-		images.put("car", getPicture("car"));
+		images.put("boid", getPicture("boid"));
 
 		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
 		myBuffer = myImage.createGraphics();
@@ -64,15 +65,23 @@ public class SimulationView extends JPanel
 		myBuffer.setColor(Color.green);
 		myBuffer.fillRect(0, 0, framex, framey);
 
-		ArrayList<Car> cars = new ArrayList<Car>();
-		ArrayList<Object> carsAsObjects = (ArrayList<Object>) applet.interactWithServlet(Command.GET_CARS).get(0);
+		myBuffer.setColor(Color.gray);
+		for(int x = 0; x < framex; x+=Constants.ROAD_VERTICAL_SEPARATION){
+			myBuffer.fillRect(x, 0, 2, framey);
+		}
+		for(int y = 0; y < framey; y+=Constants.ROAD_HORIZONTAL_SEPARATION){
+			myBuffer.fillRect(0, y, framex, 2);
+		}
 
-		for(Object car : carsAsObjects)
-			cars.add((Car) car);
+		ArrayList<Boid> boids = new ArrayList<Boid>();
+		ArrayList<Object> boidsAsObjects = (ArrayList<Object>) applet.interactWithServlet(Command.GET_BOIDS).get(0);
 
-		for(Car c : cars)
+		for(Object boid : boidsAsObjects)
+			boids.add((Boid) boid);
+
+		for(Boid b : boids)
 		{
-			c.draw(myBuffer, images.get("car"));
+			b.draw(myBuffer, images.get("boid"));
 		}
 
 		g.drawImage(myImage, 0, 0, getWidth(), getHeight(), 0, 0, framex, framey, null);

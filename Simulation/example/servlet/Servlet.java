@@ -3,6 +3,8 @@ package example.servlet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import example.shared.Command;
@@ -14,55 +16,21 @@ public class Servlet extends servlet.Servlet
 {
 	private static final long serialVersionUID = 8303699064575138297L;
 
-	protected Simulation simulation;
+	private int simulationSpeed;
 
-	protected int simulationSpeed;
-
-	private final Thread simulationThread;
+	private Map<String, Simulation> simulations;
+	private Map<String, Thread> simulationThreads;
 
 	public Servlet()
 	{
 		super();
 
-		simulation = new Simulation();
+		simulationSpeed = 100;
 
-		simulationSpeed = 50;
+		simulations = new HashMap<String, Simulation>();
+		simulationThreads = new HashMap<String, Thread>();
 
-		LOGGER.fine("Created simulation");
-
-		simulationThread = new Thread(new SimulationRunner(), "Simulation_Thread");
-		simulationThread.start();
-
-		LOGGER.fine("Created servlet and started simulation");
-	}
-
-	protected class SimulationRunner implements Runnable
-	{
-		public SimulationRunner()
-		{
-		}
-
-		@Override
-		public void run()
-		{
-			LOGGER.fine("Entered run");
-			while(!Thread.currentThread().isInterrupted())
-			{
-				LOGGER.fine("Began a step-through of the simulation");
-				simulation.run();
-				LOGGER.fine("Completed a step-through of the simulation");
-				try
-				{
-					Thread.sleep(simulationSpeed);
-				}
-				catch(InterruptedException e)
-				{
-					e.printStackTrace();
-					LOGGER.warning("Simulation sleep thread interrupted " + e.getMessage());
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
+		LOGGER.fine("Created example servlet");
 	}
 
 	public void destroy()
@@ -71,30 +39,67 @@ public class Servlet extends servlet.Servlet
 
 		try
 		{
-			simulationThread.join();
+			for(String name : simulationThreads.keySet())
+			{
+				simulationThreads.get(name).join();
+			}
 		}
 		catch(InterruptedException e)
 		{
 			e.printStackTrace();
 			LOGGER.warning("Unable to end simulation thread " + e.getMessage());
 		}
+
+		simulationThreads.clear();
+		simulations.clear();
 	}
 
-	public void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command) throws IOException
+	protected void createConnection(String name)
+	{
+		super.createConnection(name);
+
+		Simulation simulation = new Simulation();
+		Thread simulationThread = new Thread(new SimulationRunner(name), "Simulation_Thread_" + name);
+
+		simulations.put(name, simulation);
+		simulationThreads.put(name, simulationThread);
+
+		simulationThread.start();
+	}
+
+	protected void closeConnection(String name)
+	{
+		super.closeConnection(name);
+
+		try
+		{
+			simulationThreads.get(name).join();
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+			LOGGER.warning("Unable to end simulation thread " + name + " " + e.getMessage());
+		}
+
+		simulationThreads.remove(name);
+		simulations.remove(name);
+	}
+
+	protected void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command, String name) throws IOException
 	{
 		if(!(command instanceof Command))
 		{
-			super.doCommand(inputFromApplet, outputToApplet, command);
+			super.doCommand(inputFromApplet, outputToApplet, command, name);
 		}
 
 		Command c = (Command) command;
 		switch(c)
 		{
-			case ADD_CAR:
+			case ADD_BOID:
 			{
-				LOGGER.log(Level.INFO, "adding cars");
+				LOGGER.log(Level.INFO, "adding boids");
 
-				simulation.addCar();
+				simulations.get(name).addBoid();
 
 				// return true to signify success
 				outputToApplet.writeObject(new Integer("1"));
@@ -102,18 +107,18 @@ public class Servlet extends servlet.Servlet
 
 				break;
 			}
-			case GET_CARS:
+			case GET_BOIDS:
 			{
-				LOGGER.log(Level.INFO, "getting cars");
+				LOGGER.log(Level.INFO, "getting boids");
 
 				outputToApplet.writeObject(new Integer("1"));
-				outputToApplet.writeObject(simulation.getCars());
+				outputToApplet.writeObject(simulations.get(name).getBoids());
 
 				break;
 			}
-			case REMOVE_CAR:
+			case REMOVE_BOID:
 			{
-				LOGGER.log(Level.INFO, "removing cars");
+				LOGGER.log(Level.INFO, "removing boids");
 
 				Integer index = null;
 				try
@@ -123,14 +128,14 @@ public class Servlet extends servlet.Servlet
 				catch(ClassNotFoundException e)
 				{
 					e.printStackTrace();
-					LOGGER.warning("Problem with getting index for removing car " + e.getMessage());
+					LOGGER.warning("Problem with getting index for removing boid " + e.getMessage());
 
 					// signify failure
 					outputToApplet.writeObject(new Integer("-1"));
 					outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging message failed");
 				}
 
-				simulation.removeCar(index);
+				simulations.get(name).removeBoid(index);
 
 				break;
 			}
@@ -143,6 +148,38 @@ public class Servlet extends servlet.Servlet
 				outputToApplet.writeObject(Communication.COMMAND_UNKNOWN_ERROR);
 
 				break;
+			}
+		}
+	}
+
+	protected class SimulationRunner implements Runnable
+	{
+		private String name;
+
+		public SimulationRunner(String n)
+		{
+			name = n;
+		}
+
+		@Override
+		public void run()
+		{
+			LOGGER.fine("Entered run for " + name);
+			while(!Thread.currentThread().isInterrupted())
+			{
+				LOGGER.fine("Began a step-through of the simulation for " + name);
+				simulations.get(name).run();
+				LOGGER.fine("Completed a step-through of the simulation for " + name);
+				try
+				{
+					Thread.sleep(simulationSpeed);
+				}
+				catch(InterruptedException e)
+				{
+					e.printStackTrace();
+					LOGGER.warning("Simulation sleep thread interrupted for " + name + " " + e.getMessage());
+					Thread.currentThread().interrupt();
+				}
 			}
 		}
 	}

@@ -19,7 +19,7 @@ public class Servlet extends HttpServlet
 {
 	private static final long serialVersionUID = 6938369357587229915L;
 
-	protected static Logger LOGGER;
+	protected Logger LOGGER;
 
 	public Servlet()
 	{
@@ -32,7 +32,7 @@ public class Servlet extends HttpServlet
 		LOGGER.fine("Created servlet.Servlet and loggers");
 	}
 
-	public void closeInput(ObjectInputStream inputFromApplet)
+	private void closeInput(ObjectInputStream inputFromApplet)
 	{
 		try
 		{
@@ -44,7 +44,7 @@ public class Servlet extends HttpServlet
 		}
 	}
 
-	public void closeOutput(ObjectOutputStream outputToApplet)
+	private void closeOutput(ObjectOutputStream outputToApplet)
 	{
 		try
 		{
@@ -57,7 +57,15 @@ public class Servlet extends HttpServlet
 		}
 	}
 
-	public void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command) throws IOException
+	protected void createConnection(String name)
+	{
+	}
+
+	protected void closeConnection(String name)
+	{
+	}
+
+	protected void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command, String name) throws IOException
 	{
 		if(!(command instanceof Command))
 		{
@@ -68,6 +76,32 @@ public class Servlet extends HttpServlet
 		Command c = (Command) command;
 		switch(c)
 		{
+			case CREATE_CONNECTION:
+			{
+				LOGGER.log(Level.FINE, "creating a connection with an applet");
+
+				createConnection(name);
+
+				LOGGER.log(Level.FINE, "created a connection with " + name);
+
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(true);
+
+				break;
+			}
+			case CLOSE_CONNECTION:
+			{
+				LOGGER.log(Level.FINE, "destroying a connection with an applet");
+
+				closeConnection(name);
+
+				LOGGER.log(Level.FINE, "destroyed a connection with " + name);
+
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(true);
+
+				break;
+			}
 			case LOG:
 			{
 				LOGGER.log(Level.INFO, "logging message from applet");
@@ -79,7 +113,7 @@ public class Servlet extends HttpServlet
 				}
 				catch(ClassNotFoundException | IOException e)
 				{
-					LOGGER.warning("Problem with reading in the logging level from the applet " + e.getMessage());
+					LOGGER.warning("Problem with reading in the logging level from " + name + " " + e.getMessage());
 
 					// signify failure
 					outputToApplet.writeObject(new Integer("-1"));
@@ -96,7 +130,7 @@ public class Servlet extends HttpServlet
 				catch(ClassNotFoundException | IOException e)
 				{
 					e.printStackTrace();
-					LOGGER.warning("Problem with reading in the message from the applet " + e.getMessage());
+					LOGGER.warning("Problem with reading in the message from " + name + " " + e.getMessage());
 
 					// signify failure
 					outputToApplet.writeObject(new Integer("-1"));
@@ -136,13 +170,16 @@ public class Servlet extends HttpServlet
 			inputFromApplet = new ObjectInputStream(request.getInputStream());
 			LOGGER.fine("created input streams");
 
-			Object c = inputFromApplet.readObject();
-			LOGGER.fine("Received " + c + " command");
-
 			outputToApplet = new ObjectOutputStream(response.getOutputStream());
 			LOGGER.fine("created output streams");
 
-			doCommand(inputFromApplet, outputToApplet, c);
+			Object c = inputFromApplet.readObject();
+			LOGGER.fine("Received " + c + " command");
+
+			String name = (String) inputFromApplet.readObject();
+			LOGGER.fine("Received from " + name);
+
+			doCommand(inputFromApplet, outputToApplet, c, name);
 		}
 		catch(IOException | ClassNotFoundException e)
 		{

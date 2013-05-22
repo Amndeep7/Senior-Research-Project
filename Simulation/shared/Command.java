@@ -2,5 +2,5 @@ package shared;
 
 public enum Command
 {
-	LOG;
+	LOG, CREATE_CONNECTION, CLOSE_CONNECTION;
 }

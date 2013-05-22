@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import javax.swing.JApplet;
 
+import shared.Command;
+
 public class Applet extends JApplet
 {
 	private static final long serialVersionUID = 3170574749472554461L;
@@ -19,11 +21,22 @@ public class Applet extends JApplet
 
 	protected String error;
 
+	protected String name;
+
 	public void init()
 	{
 		size = getSize();
 
 		error = "";
+
+		name = "" + System.currentTimeMillis()*Math.random()*System.nanoTime();
+
+		interactWithServlet(Command.CREATE_CONNECTION);
+	}
+
+	public void destroy()
+	{
+		interactWithServlet(Command.CLOSE_CONNECTION);
 	}
 
 	public void setError(String message)
@@ -63,6 +76,8 @@ public class Applet extends JApplet
 
 			outputToServlet.writeObject(command);
 			outputToServlet.flush();
+
+			outputToServlet.writeObject(name);
 
 			for(Object o : input)
 			{
