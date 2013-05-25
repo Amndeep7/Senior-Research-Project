@@ -3,6 +3,7 @@ package example.shared;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
@@ -91,10 +92,15 @@ public class Boid implements Serializable
 
 	public void draw(Graphics2D g, BufferedImage i)
 	{
-		/*
-		 * AffineTransform at = new AffineTransform(); at.translate(getXPos(), getYPos()); at.rotate(getFacing()); at.scale(getWidth()/(double)i.getWidth(),
-		 * getHeight()/(double)i.getHeight()); at.translate(-getXPos(), -getYPos()); g.drawImage(i, at, null);
-		 */
+/*
+		 AffineTransform at = new AffineTransform();
+		 at.translate(-getXPos(), -getYPos());
+		 at.scale(getWidth()/(double)i.getWidth(), getHeight()/(double)i.getHeight());
+		 at.rotate(getFacing());
+		 at.translate(getXPos(), getYPos());
+		 g.drawImage(i, at, null);
+*/
+
 		int[] xPoints = new int[3];
 		int[] yPoints = new int[3];
 
@@ -110,6 +116,7 @@ public class Boid implements Serializable
 		g.setColor(Color.ORANGE);
 		g.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		g.drawString(name, (int) getXPos(), (int) getYPos());
+
 	}
 
 	public void changeAngle()

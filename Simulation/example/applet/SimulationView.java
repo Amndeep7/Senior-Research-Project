@@ -33,7 +33,7 @@ public class SimulationView extends JPanel
 		applet = a;
 
 		images = new HashMap<String, BufferedImage>();
-		images.put("boid", getPicture("boid"));
+		images.put("boid", getPicture("car"));
 
 		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
 		myBuffer = myImage.createGraphics();
