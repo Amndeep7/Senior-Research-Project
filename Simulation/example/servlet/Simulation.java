@@ -14,13 +14,16 @@ public class Simulation
 	public Simulation()
 	{
 		boids = new ArrayList<Boid>();
-		addBoid();
-		for(int z = 0; z < 20; z++)
+		addBoid("" + boids.size(), 500, 500, 25, 25, 10, 0);
+		for(int z = 0; z < 5; z++)
 		{
-			// addBoid("" + boids.size(), Math.random() * framex, Math.random() * framey, 100, 100, Math.random() * 5, Math.random() * 2 * Math.PI);
+			addBoid();
 		}
-		for(Boid b : boids){
-			applyGrid(b);
+		for(int x = 0; x < 5; x++){
+			for(int y = x+1; y < 5; y++){
+				boids.get(x).getNeighbors().add(boids.get(y));
+				boids.get(y).getNeighbors().add(boids.get(x));
+			}
 		}
 	}
 
@@ -31,13 +34,14 @@ public class Simulation
 
 	public void addBoid()
 	{
-		addBoid("" + boids.size(), 500, 500, 100, 100, 10, 0);
+		addBoid("" + boids.size(), Math.random() * framex, Math.random() * framey, 25, 25, 5+Math.random() * 15, Math.random() * 2 * Math.PI);
 	}
 
 	public void addBoid(String n, double x, double y, int w, int h, double s, double a)
 	{
 		Boid b = new Boid(n, x, y, w, h, s, a);
 		applyGrid(b);
+		changeAngle(b);
 		boids.add(b);
 	}
 
@@ -76,15 +80,41 @@ public class Simulation
 
 		if(position[1] > Constants.ROAD_VERTICAL_SEPARATION / 2.0)
 		{
-			position[1] = Math.abs(position[1] - Constants.ROAD_VERTICAL_SEPARATION);
+			position[1] = Constants.ROAD_VERTICAL_SEPARATION;
+		}
+		else{
+			position[1] = 0;
 		}
 		b.setXPos(position[1] + position[0] * Constants.ROAD_VERTICAL_SEPARATION);
 
 		if(position[3] > Constants.ROAD_HORIZONTAL_SEPARATION / 2.0)
 		{
-			position[3] = Math.abs(position[3] - Constants.ROAD_HORIZONTAL_SEPARATION);
+			position[3] = Constants.ROAD_HORIZONTAL_SEPARATION;
+		}
+		else{
+			position[3] = 0;
 		}
 		b.setYPos(position[3] + position[2] * Constants.ROAD_HORIZONTAL_SEPARATION);
+	}
+	
+	public void changeAngle(Boid b) {
+		double angle = b.getFacing();
+		if (Math.random() < 0.95) {
+			angle += Math.random() < 0.5 ? Math.PI / 2.0 : -Math.PI / 2.0;
+		}
+		while (angle < 0) {
+			angle += 2 * Math.PI;
+		}
+		double quotient = (int) (angle / (Math.PI / 2.0));
+		angle %= Math.PI / 2.0;
+		if (angle > (Math.PI / 2.0) / 2.0) {
+			angle = Math.PI/2.0;
+		}
+		else{
+			angle = 0;
+		}
+		angle += quotient * (Math.PI / 2.0);
+		b.setFacing(angle);
 	}
 
 	public double[] gridPosition(Boid b){
@@ -110,7 +140,7 @@ public class Simulation
 
 			if(closeEnoughToCorner(b, 5)){
 				applyGrid(b);
-				b.changeAngle();
+				changeAngle(b);
 			}
 		}
 	}

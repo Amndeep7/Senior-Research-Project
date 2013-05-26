@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import example.shared.Boid;
 import example.shared.Command;
 import example.servlet.Simulation;
 
@@ -102,7 +103,7 @@ public class ExampleServlet extends servlet.Servlet {
 
 			outputToApplet.writeObject(new Integer("1"));
 			outputToApplet.writeObject(simulations.get(name).getBoids());
-			
+
 			// return true to signify success
 			outputToApplet.writeObject(new Integer("1"));
 			outputToApplet.writeObject(true);
@@ -116,7 +117,6 @@ public class ExampleServlet extends servlet.Servlet {
 			try {
 				index = (Integer) inputFromApplet.readObject();
 				simulations.get(name).removeBoid(index);
-				
 
 				// return true to signify success
 				outputToApplet.writeObject(new Integer("1"));
@@ -133,6 +133,19 @@ public class ExampleServlet extends servlet.Servlet {
 						.toString()
 						+ ": Attempt to read logging message failed");
 			}
+
+			break;
+		}
+		case DISPLAY_NEIGHBORS: {
+			LOGGER.log(Level.INFO, "displaying neighbors");
+
+			for(Boid b : simulations.get(name).getBoids()){
+				b.setDisplayNeighbors(!b.getDisplayNeighbors());
+			}
+			
+			// return true to signify success
+			outputToApplet.writeObject(new Integer("1"));
+			outputToApplet.writeObject(true);
 
 			break;
 		}

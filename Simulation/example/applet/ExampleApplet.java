@@ -68,6 +68,21 @@ public class ExampleApplet extends applet.Applet
 				interactWithServlet(example.shared.Command.REMOVE_BOID, new Integer(0));
 			}
 		});
+		interaction.add(new JButton("Display neighbors"));
+		((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).getText().equals("Display neighbors")){
+					((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).setText("Do not display neighbors");
+				}
+				else{
+					((JButton) (interaction.getComponents()[interaction.getComponents().length - 1])).setText("Display neighbors");
+				}
+				interactWithServlet(Command.LOG, Level.INFO, "I want to display neighbors");
+				interactWithServlet(example.shared.Command.DISPLAY_NEIGHBORS);
+			}
+		});
 		add(interaction, BorderLayout.SOUTH);
 
 		drawer = new Timer(100, new ActionListener()
