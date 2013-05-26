@@ -13,7 +13,7 @@
     <!-- define servlets and mapping -->
     <servlet>
         <servlet-name>simulation</servlet-name>
-        <servlet-class>example.servlet.Servlet</servlet-class>
+        <servlet-class>example.servlet.ExampleServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>simulation</servlet-name>
