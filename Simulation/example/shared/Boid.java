@@ -103,14 +103,10 @@ public class Boid implements Serializable {
 		int[] yPoints = new int[3];
 		xPoints[0] = (int) Math.rint(xPos + width * Math.cos(getFacing()));
 		yPoints[0] = (int) Math.rint(yPos + height * Math.sin(getFacing()));
-		xPoints[1] = (int) Math.rint(xPos + width
-				* Math.cos(getFacing() + 3 * Math.PI / 4));
-		yPoints[1] = (int) Math.rint(yPos + height
-				* Math.sin(getFacing() + 3 * Math.PI / 4));
-		xPoints[2] = (int) Math.rint(xPos + width
-				* Math.cos(getFacing() + 5 * Math.PI / 4));
-		yPoints[2] = (int) Math.rint(yPos + height
-				* Math.sin(getFacing() + 5 * Math.PI / 4));
+		xPoints[1] = (int) Math.rint(xPos + width * Math.cos(getFacing() + 3 * Math.PI / 4));
+		yPoints[1] = (int) Math.rint(yPos + height * Math.sin(getFacing() + 3 * Math.PI / 4));
+		xPoints[2] = (int) Math.rint(xPos + width * Math.cos(getFacing() + 5 * Math.PI / 4));
+		yPoints[2] = (int) Math.rint(yPos + height * Math.sin(getFacing() + 5 * Math.PI / 4));
 
 		g.setColor(Color.MAGENTA);
 		g.fillPolygon(xPoints, yPoints, 3);
@@ -122,8 +118,7 @@ public class Boid implements Serializable {
 			g.setStroke(new BasicStroke(3));
 			g.setColor(Color.WHITE);
 			for (Boid neighbor : neighbors) {
-				g.drawLine((int) xPos, (int) yPos, (int) neighbor.xPos,
-						(int) neighbor.yPos);
+				g.drawLine((int) xPos, (int) yPos, (int) neighbor.xPos, (int) neighbor.yPos);
 			}
 		}
 	}

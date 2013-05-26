@@ -61,26 +61,19 @@ public class ExampleServlet extends servlet.Servlet {
 			simulationThreads.get(name).join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			LOGGER.warning("Unable to end simulation thread " + name + " "
-					+ e.getMessage());
+			LOGGER.warning("Unable to end simulation thread " + name + " " + e.getMessage());
 			Thread.currentThread().interrupt();
 		}
 
-		LOGGER.fine("Simulation thread size before = "
-				+ simulationThreads.size() + " Simulation size before = "
-				+ simulations.size());
+		LOGGER.fine("Simulation thread size before = " + simulationThreads.size() + " Simulation size before = " + simulations.size());
 
 		simulationThreads.remove(name);
 		simulations.remove(name);
 
-		LOGGER.fine("Simulation thread size after = "
-				+ simulationThreads.size() + " Simulation size after = "
-				+ simulations.size());
+		LOGGER.fine("Simulation thread size after = " + simulationThreads.size() + " Simulation size after = " + simulations.size());
 	}
 
-	protected void doCommand(ObjectInputStream inputFromApplet,
-			ObjectOutputStream outputToApplet, Object command, String name)
-			throws IOException {
+	protected void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command, String name) throws IOException {
 		if (!(command instanceof Command)) {
 			super.doCommand(inputFromApplet, outputToApplet, command, name);
 		}
@@ -124,14 +117,11 @@ public class ExampleServlet extends servlet.Servlet {
 
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-				LOGGER.warning("Problem with getting index for removing boid "
-						+ e.getMessage());
+				LOGGER.warning("Problem with getting index for removing boid " + e.getMessage());
 
 				// signify failure
 				outputToApplet.writeObject(new Integer("-1"));
-				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR
-						.toString()
-						+ ": Attempt to read logging message failed");
+				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging message failed");
 			}
 
 			break;
@@ -139,10 +129,10 @@ public class ExampleServlet extends servlet.Servlet {
 		case DISPLAY_NEIGHBORS: {
 			LOGGER.log(Level.INFO, "displaying neighbors");
 
-			for(Boid b : simulations.get(name).getBoids()){
+			for (Boid b : simulations.get(name).getBoids()) {
 				b.setDisplayNeighbors(!b.getDisplayNeighbors());
 			}
-			
+
 			// return true to signify success
 			outputToApplet.writeObject(new Integer("1"));
 			outputToApplet.writeObject(true);
@@ -151,9 +141,7 @@ public class ExampleServlet extends servlet.Servlet {
 		}
 		default: // as in default response
 		{
-			LOGGER.log(Level.SEVERE,
-					Communication.COMMAND_UNKNOWN_ERROR.toString()
-							+ " in example " + c);
+			LOGGER.log(Level.SEVERE, Communication.COMMAND_UNKNOWN_ERROR.toString() + " in example " + c);
 
 			// signify failure
 			outputToApplet.writeObject(new Integer("-1"));
@@ -181,11 +169,9 @@ public class ExampleServlet extends servlet.Servlet {
 		public void run() {
 			LOGGER.fine("Entered run for " + name);
 			while (shouldRun) {
-				LOGGER.fine("Began a step-through of the simulation for "
-						+ name);
+				LOGGER.fine("Began a step-through of the simulation for " + name);
 				simulations.get(name).run();
-				LOGGER.fine("Completed a step-through of the simulation for "
-						+ name);
+				LOGGER.fine("Completed a step-through of the simulation for " + name);
 				try {
 					LOGGER.fine("Now sleeping " + name);
 					Thread.sleep(simulationSpeed);

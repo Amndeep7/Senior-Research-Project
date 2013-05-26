@@ -12,8 +12,7 @@ import example.shared.Boid;
 import example.shared.Command;
 import example.shared.Constants;
 
-public class SimulationView extends JPanel
-{
+public class SimulationView extends JPanel {
 	private static final long serialVersionUID = -8869054371150649099L;
 
 	private int framex = Constants.FRAMEX, framey = Constants.FRAMEY;
@@ -22,8 +21,7 @@ public class SimulationView extends JPanel
 
 	private ExampleApplet applet;
 
-	public SimulationView(ExampleApplet a)
-	{
+	public SimulationView(ExampleApplet a) {
 		applet = a;
 
 		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
@@ -34,27 +32,25 @@ public class SimulationView extends JPanel
 	}
 
 	@SuppressWarnings("unchecked")
-	public void paintComponent(Graphics g)
-	{
+	public void paintComponent(Graphics g) {
 		myBuffer.setColor(Color.green);
 		myBuffer.fillRect(0, 0, framex, framey);
 
 		myBuffer.setColor(Color.gray);
-		for(int x = 0; x < framex; x+=Constants.ROAD_VERTICAL_SEPARATION){
+		for (int x = 0; x < framex; x += Constants.ROAD_VERTICAL_SEPARATION) {
 			myBuffer.fillRect(x, 0, 2, framey);
 		}
-		for(int y = 0; y < framey; y+=Constants.ROAD_HORIZONTAL_SEPARATION){
+		for (int y = 0; y < framey; y += Constants.ROAD_HORIZONTAL_SEPARATION) {
 			myBuffer.fillRect(0, y, framex, 2);
 		}
 
 		ArrayList<Boid> boids = new ArrayList<Boid>();
 		ArrayList<Object> boidsAsObjects = (ArrayList<Object>) applet.interactWithServlet(Command.GET_BOIDS).get(0);
 
-		for(Object boid : boidsAsObjects)
+		for (Object boid : boidsAsObjects)
 			boids.add((Boid) boid);
 
-		for(Boid b : boids)
-		{
+		for (Boid b : boids) {
 			b.draw(myBuffer);
 		}
 
