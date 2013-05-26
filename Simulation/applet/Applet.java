@@ -14,8 +14,7 @@ import javax.swing.JApplet;
 
 import shared.Command;
 
-public class Applet extends JApplet
-{
+public class Applet extends JApplet {
 	private static final long serialVersionUID = 3170574749472554461L;
 
 	protected Dimension size;
@@ -24,33 +23,29 @@ public class Applet extends JApplet
 
 	protected String name;
 
-	public void init()
-	{
+	public void init() {
 		size = getSize();
 
 		error = "";
 
-		name = "" + System.currentTimeMillis()*Math.random()*System.nanoTime();
+		name = "" + System.currentTimeMillis() * Math.random() * System.nanoTime();
 
 		interactWithServlet(Command.CREATE_CONNECTION);
 	}
 
-	public void destroy()
-	{
+	public void destroy() {
 		interactWithServlet(Command.LOG, Level.INFO, "Applet: " + name + " is trying to close");
 		interactWithServlet(Command.CLOSE_CONNECTION);
 	}
 
-	public void setError(String message)
-	{
+	public void setError(String message) {
 		error = message;
 	}
 
 	/**
 	 * Get a connection to the servlet.
 	 */
-	private URLConnection getServletConnection() throws MalformedURLException, IOException
-	{
+	private URLConnection getServletConnection() throws MalformedURLException, IOException {
 
 		// Open a connection to the servlet
 		URL urlServlet = new URL(getCodeBase(), "simulation");
@@ -66,12 +61,10 @@ public class Applet extends JApplet
 		return con;
 	}
 
-	public ArrayList<Object> interactWithServlet(Object command, Object... input)
-	{
+	public ArrayList<Object> interactWithServlet(Object command, Object... input) {
 		ArrayList<Object> results = new ArrayList<Object>();
 
-		try
-		{
+		try {
 			URLConnection con = getServletConnection();
 
 			ObjectOutputStream outputToServlet = new ObjectOutputStream(con.getOutputStream());
@@ -81,8 +74,7 @@ public class Applet extends JApplet
 
 			outputToServlet.writeObject(name);
 
-			for(Object o : input)
-			{
+			for (Object o : input) {
 				outputToServlet.writeObject(o);
 				outputToServlet.flush();
 			}
@@ -92,22 +84,16 @@ public class Applet extends JApplet
 			ObjectInputStream inputFromServlet = new ObjectInputStream(con.getInputStream());
 
 			int size = (Integer) inputFromServlet.readObject();
-			if(size < 0)
-			{
+			if (size < 0) {
 				error = inputFromServlet.readObject().toString();
-			}
-			else
-			{
-				for(int x = 0; x < size; x++)
-				{
+			} else {
+				for (int x = 0; x < size; x++) {
 					results.add(inputFromServlet.readObject());
 				}
 			}
 
 			inputFromServlet.close();
-		}
-		catch(IOException | ClassNotFoundException e)
-		{
+		} catch (IOException | ClassNotFoundException e) {
 			setError(e.getMessage());
 		}
 

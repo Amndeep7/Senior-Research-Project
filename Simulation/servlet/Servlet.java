@@ -59,12 +59,9 @@ public class Servlet extends HttpServlet {
 		LOGGER.info("TRYING to close a connection with " + name);
 	}
 
-	protected void doCommand(ObjectInputStream inputFromApplet,
-			ObjectOutputStream outputToApplet, Object command, String name)
-			throws IOException {
+	protected void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command, String name) throws IOException {
 		if (!(command instanceof Command)) {
-			LOGGER.log(Level.SEVERE,
-					"Did not receive shared.Command in doCommand from servlet.Servlet");
+			LOGGER.log(Level.SEVERE, "Did not receive shared.Command in doCommand from servlet.Servlet");
 			return;
 		}
 
@@ -101,13 +98,11 @@ public class Servlet extends HttpServlet {
 			try {
 				level = (Level) inputFromApplet.readObject();
 			} catch (ClassNotFoundException | IOException e) {
-				LOGGER.warning("Problem with reading in the logging level from "
-						+ name + " " + e.getMessage());
+				LOGGER.warning("Problem with reading in the logging level from " + name + " " + e.getMessage());
 
 				// signify failure
 				outputToApplet.writeObject(new Integer("-1"));
-				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR
-						.toString() + ": Attempt to read logging level failed");
+				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging level failed");
 
 				break;
 			}
@@ -117,14 +112,11 @@ public class Servlet extends HttpServlet {
 				message = (String) inputFromApplet.readObject();
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
-				LOGGER.warning("Problem with reading in the message from "
-						+ name + " " + e.getMessage());
+				LOGGER.warning("Problem with reading in the message from " + name + " " + e.getMessage());
 
 				// signify failure
 				outputToApplet.writeObject(new Integer("-1"));
-				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR
-						.toString()
-						+ ": Attempt to read logging message failed");
+				outputToApplet.writeObject(Communication.MISSING_ARGUMENT_ERROR.toString() + ": Attempt to read logging message failed");
 
 				break;
 			}
@@ -150,8 +142,7 @@ public class Servlet extends HttpServlet {
 		}
 	}
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		response.setContentType("application/x-java-serialized-object");
 		ObjectInputStream inputFromApplet = null;
 		ObjectOutputStream outputToApplet = null;

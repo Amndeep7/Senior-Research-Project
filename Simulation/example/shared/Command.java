@@ -1,6 +1,5 @@
 package example.shared;
 
-public enum Command
-{
+public enum Command {
 	ADD_BOID, GET_BOIDS, REMOVE_BOID, DISPLAY_NEIGHBORS;
 }
