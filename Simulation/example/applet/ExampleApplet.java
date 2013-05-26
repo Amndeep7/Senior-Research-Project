@@ -15,7 +15,7 @@ import javax.swing.Timer;
 
 import shared.Command;
 
-public class Applet extends applet.Applet
+public class ExampleApplet extends applet.Applet
 {
 	private static final long serialVersionUID = -4898572627107479083L;
 

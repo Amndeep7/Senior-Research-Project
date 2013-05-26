@@ -12,7 +12,7 @@ import example.servlet.Simulation;
 
 import shared.Communication;
 
-public class Servlet extends servlet.Servlet {
+public class ExampleServlet extends servlet.Servlet {
 	private static final long serialVersionUID = 8303699064575138297L;
 
 	private int simulationSpeed;
@@ -20,7 +20,7 @@ public class Servlet extends servlet.Servlet {
 	private Map<String, Simulation> simulations;
 	private Map<String, SimulationThread> simulationThreads;
 
-	public Servlet() {
+	public ExampleServlet() {
 		super();
 
 		simulationSpeed = 100;
@@ -34,19 +34,9 @@ public class Servlet extends servlet.Servlet {
 	public void destroy() {
 		super.destroy();
 		LOGGER.fine("Trying to destroy servlet");
-		try {
-			for (String name : simulationThreads.keySet()) {
-				simulationThreads.get(name).setRunState(false);
-				simulationThreads.get(name).join();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			LOGGER.warning("Unable to end simulation thread " + e.getMessage());
-			Thread.currentThread().interrupt();
+		for (String name : simulationThreads.keySet()) {
+			closeConnection(name);
 		}
-
-		simulationThreads.clear();
-		simulations.clear();
 	}
 
 	protected void createConnection(String name) {
@@ -112,6 +102,10 @@ public class Servlet extends servlet.Servlet {
 
 			outputToApplet.writeObject(new Integer("1"));
 			outputToApplet.writeObject(simulations.get(name).getBoids());
+			
+			// return true to signify success
+			outputToApplet.writeObject(new Integer("1"));
+			outputToApplet.writeObject(true);
 
 			break;
 		}
@@ -121,6 +115,13 @@ public class Servlet extends servlet.Servlet {
 			Integer index = null;
 			try {
 				index = (Integer) inputFromApplet.readObject();
+				simulations.get(name).removeBoid(index);
+				
+
+				// return true to signify success
+				outputToApplet.writeObject(new Integer("1"));
+				outputToApplet.writeObject(true);
+
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				LOGGER.warning("Problem with getting index for removing boid "
@@ -132,8 +133,6 @@ public class Servlet extends servlet.Servlet {
 						.toString()
 						+ ": Attempt to read logging message failed");
 			}
-
-			simulations.get(name).removeBoid(index);
 
 			break;
 		}
@@ -155,16 +154,16 @@ public class Servlet extends servlet.Servlet {
 	protected class SimulationThread extends Thread {
 		private String name;
 		private boolean shouldRun;
-		
-		public SimulationThread(String n){
+
+		public SimulationThread(String n) {
 			name = n;
 			shouldRun = true;
 		}
-		
-		public void setRunState(boolean b){
+
+		public void setRunState(boolean b) {
 			shouldRun = b;
 		}
-		
+
 		@Override
 		public void run() {
 			LOGGER.fine("Entered run for " + name);

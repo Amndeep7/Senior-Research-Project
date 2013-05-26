@@ -24,16 +24,17 @@ public class SimulationView extends JPanel
 	private BufferedImage myImage;
 	private Graphics2D myBuffer;
 
-	private Applet applet;
+	private ExampleApplet applet;
 
 	private HashMap<String, BufferedImage> images;
 
-	public SimulationView(Applet a)
+	public SimulationView(ExampleApplet a)
 	{
 		applet = a;
 
 		images = new HashMap<String, BufferedImage>();
-		images.put("boid", getPicture("car"));
+		images.put("boid", getPicture("boid"));
+		images.put("car", getPicture("car"));
 
 		myImage = new BufferedImage(framex, framey, BufferedImage.TYPE_INT_ARGB);
 		myBuffer = myImage.createGraphics();
