@@ -81,4 +81,9 @@ public class Applet extends applet.Applet
 		});
 		drawer.start();
 	}
+	
+	public void destroy(){
+		drawer.stop();
+		super.destroy();
+	}
 }

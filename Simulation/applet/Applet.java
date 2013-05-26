@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import javax.swing.JApplet;
 
@@ -36,6 +37,7 @@ public class Applet extends JApplet
 
 	public void destroy()
 	{
+		interactWithServlet(Command.LOG, Level.INFO, "Applet: " + name + " is trying to close");
 		interactWithServlet(Command.CLOSE_CONNECTION);
 	}
 

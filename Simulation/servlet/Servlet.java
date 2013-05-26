@@ -59,10 +59,12 @@ public class Servlet extends HttpServlet
 
 	protected void createConnection(String name)
 	{
+		LOGGER.info("Trying to create a connection with " + name);
 	}
 
 	protected void closeConnection(String name)
 	{
+		LOGGER.info("TRYING to close a connection with " + name);
 	}
 
 	protected void doCommand(ObjectInputStream inputFromApplet, ObjectOutputStream outputToApplet, Object command, String name) throws IOException
