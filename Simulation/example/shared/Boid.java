@@ -98,6 +98,73 @@ public class Boid implements Serializable {
 		displayNeighbors = dn;
 	}
 
+	public void move() {
+		xPos += Math.cos(angle) * getSpeed();
+		yPos += Math.sin(angle) * getSpeed();
+	}
+
+	public boolean inDiscomfortRadius(Boid b) {
+		if (Constants.RADIUS_OF_DISCOMFORT * Constants.RADIUS_OF_DISCOMFORT > (xPos - b.xPos) * (xPos - b.xPos) + (yPos - b.yPos) * (yPos - b.yPos)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void adjustSpeed() {
+		if (neighbors.size() != 0) {
+			boolean foundDiscomfortableNeighbors = false;
+			double aveSpeed = 0;
+
+			for (Boid b : neighbors) {
+				if (!foundDiscomfortableNeighbors && inDiscomfortRadius(b)) {
+					foundDiscomfortableNeighbors = true;
+				}
+				aveSpeed += b.getSpeed();
+			}
+			aveSpeed /= neighbors.size();
+
+			double delta = 0.40 * (speed - aveSpeed);
+
+			speed = foundDiscomfortableNeighbors ? speed + delta : speed - delta;
+		}
+
+		speed += (Math.random() < 0.6 ? -1 : 1) * Math.random() * 0.15;
+
+		if (speed < 0) {
+			speed *= -1;
+			angle += Math.PI;
+		}
+		
+		if(speed < Constants.MINIMUM_SPEED){
+			speed = Constants.MINIMUM_SPEED;
+		}
+		else if(speed > Constants.MAXIMUM_SPEED){
+			speed = Constants.MAXIMUM_SPEED;
+		}
+	}
+
+	public void adjustAngle() {
+		if (neighbors.size() != 0) {
+			boolean foundDiscomfortableNeighbors = false;
+			double aveAngle = 0;
+
+			for (Boid b : neighbors) {
+				if (!foundDiscomfortableNeighbors && inDiscomfortRadius(b)) {
+					foundDiscomfortableNeighbors = true;
+				}
+				aveAngle += b.getFacing();
+			}
+			aveAngle /= neighbors.size();
+
+			double delta = 0.9*(angle - aveAngle);
+
+			angle = foundDiscomfortableNeighbors ? angle + delta : angle - delta;
+		}
+
+		angle += (Math.random() < 0.5 ? -1 : 1) * Math.random() * Math.PI / 3;
+	}
+
 	public void draw(Graphics2D g) {
 		int[] xPoints = new int[3];
 		int[] yPoints = new int[3];
@@ -114,18 +181,17 @@ public class Boid implements Serializable {
 		g.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		g.drawString(name, (int) getXPos(), (int) getYPos());
 
+		g.setStroke(new BasicStroke(5f));
 		if (displayNeighbors) {
-			g.setStroke(new BasicStroke(3));
-			g.setColor(Color.WHITE);
 			for (Boid neighbor : neighbors) {
+				if (inDiscomfortRadius(neighbor)) {
+					g.setColor(Color.RED);
+				} else {
+					g.setColor(Color.WHITE);
+				}
 				g.drawLine((int) xPos, (int) yPos, (int) neighbor.xPos, (int) neighbor.yPos);
 			}
 		}
-	}
-
-	public void move() {
-		xPos += Math.cos(angle) * getSpeed();
-		yPos += Math.sin(angle) * getSpeed();
 	}
 
 	public String toString() {
