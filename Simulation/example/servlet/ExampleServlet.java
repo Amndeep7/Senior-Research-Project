@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import example.shared.Boid;
 import example.shared.Command;
 import example.servlet.Simulation;
 
@@ -129,9 +128,7 @@ public class ExampleServlet extends servlet.Servlet {
 		case DISPLAY_NEIGHBORS: {
 			LOGGER.log(Level.INFO, "displaying neighbors");
 
-			for (Boid b : simulations.get(name).getBoids()) {
-				b.setDisplayNeighbors(!b.getDisplayNeighbors());
-			}
+			simulations.get(name).setDisplayNeighbors(!simulations.get(name).getDisplayNeighbors());
 
 			// return true to signify success
 			outputToApplet.writeObject(new Integer("1"));

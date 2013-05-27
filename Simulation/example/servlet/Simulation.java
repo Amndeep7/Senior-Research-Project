@@ -10,16 +10,32 @@ public class Simulation {
 
 	private ArrayList<Boid> boids;
 
+	private boolean displayNeighbors;
+
 	public Simulation() {
 		boids = new ArrayList<Boid>();
 		addBoid("" + boids.size(), 500, 500, 25, 25, 10, 0);
-		for (int z = 0; z < 5; z++) {
+		for (int z = 0; z < 50; z++) {
 			addBoid();
 		}
+
+		displayNeighbors = false;
 	}
 
 	public ArrayList<Boid> getBoids() {
+		for (Boid b : boids) {
+			b.setDisplayNeighbors(displayNeighbors);
+		}
+
 		return boids;
+	}
+
+	public boolean getDisplayNeighbors() {
+		return displayNeighbors;
+	}
+
+	public void setDisplayNeighbors(boolean b) {
+		displayNeighbors = b;
 	}
 
 	public void addBoid() {
@@ -73,9 +89,6 @@ public class Simulation {
 
 	public void changeAngle(Boid b) {
 		double angle = b.getFacing();
-		if (Math.random() < 0.95) {
-			angle += Math.random() < 0.5 ? Math.PI / 2.0 : -Math.PI / 2.0;
-		}
 		while (angle < 0) {
 			angle += 2 * Math.PI;
 		}
@@ -106,6 +119,19 @@ public class Simulation {
 
 	public void run() {
 		for (Boid b : boids) {
+			b.move();
+			applyWrapAround(b);
+
+			if (closeEnoughToCorner(b, 5)) {
+				applyGrid(b);
+
+				b.adjustSpeed();
+				b.adjustAngle();
+				
+				changeAngle(b);
+			}
+		}
+		for (Boid b : boids) {
 			b.setNeighbors(new ArrayList<Boid>());
 		}
 		for (int x = 0; x < boids.size(); x++) {
@@ -116,15 +142,6 @@ public class Simulation {
 					boids.get(x).getNeighbors().add(boids.get(y));
 					boids.get(y).getNeighbors().add(boids.get(x));
 				}
-			}
-		}
-		for (Boid b : boids) {
-			b.move();
-			applyWrapAround(b);
-
-			if (closeEnoughToCorner(b, 5)) {
-				applyGrid(b);
-				changeAngle(b);
 			}
 		}
 	}
