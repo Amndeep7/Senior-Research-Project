@@ -20,3 +20,7 @@ Framework/experimentation/text/*
 Framework/java.policy.applet
 Framework/applet/java.policy.applet
 Framework/applet.Applet1357446806811.html
+Framework/.classpath
+Framework/.project
+Framework/.pydevproject
+Framework/.settings/
