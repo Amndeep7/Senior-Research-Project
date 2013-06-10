@@ -38,10 +38,10 @@ public class SimulationView extends JPanel {
 
 		myBuffer.setColor(Color.gray);
 		for (int x = 0; x < framex; x += Constants.ROAD_VERTICAL_SEPARATION) {
-			myBuffer.fillRect(x, 0, 2, framey);
+			myBuffer.fillRect(x, 0, 4, framey);
 		}
 		for (int y = 0; y < framey; y += Constants.ROAD_HORIZONTAL_SEPARATION) {
-			myBuffer.fillRect(0, y, framex, 2);
+			myBuffer.fillRect(0, y, framex, 4);
 		}
 
 		ArrayList<Boid> boids = new ArrayList<Boid>();

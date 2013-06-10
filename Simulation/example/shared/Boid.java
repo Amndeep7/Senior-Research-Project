@@ -116,7 +116,7 @@ public class Boid implements Serializable {
 			boolean foundDiscomfortableNeighbors = false;
 			double aveSpeed = 0;
 
-			for (Boid b : neighbors) {
+		for (Boid b : neighbors) {
 				if (!foundDiscomfortableNeighbors && inDiscomfortRadius(b)) {
 					foundDiscomfortableNeighbors = true;
 				}
@@ -124,9 +124,9 @@ public class Boid implements Serializable {
 			}
 			aveSpeed /= neighbors.size();
 
-			double delta = 0.40 * (speed - aveSpeed);
+			double delta = 0.70 * (speed - aveSpeed);
 
-			speed = foundDiscomfortableNeighbors ? speed + delta : speed - delta;
+			speed = foundDiscomfortableNeighbors ? speed + 1.25*delta : speed - delta;
 		}
 
 		speed += (Math.random() < 0.6 ? -1 : 1) * Math.random() * 0.15;
@@ -157,9 +157,9 @@ public class Boid implements Serializable {
 			}
 			aveAngle /= neighbors.size();
 
-			double delta = 0.9*(angle - aveAngle);
+			double delta = 0.99*(angle - aveAngle);
 
-			angle = foundDiscomfortableNeighbors ? angle + delta : angle - delta;
+			angle = foundDiscomfortableNeighbors ? angle + 1.25*delta : angle - delta;
 		}
 
 		angle += (Math.random() < 0.5 ? -1 : 1) * Math.random() * Math.PI / 3;

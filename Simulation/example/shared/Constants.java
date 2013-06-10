@@ -8,7 +8,7 @@ public class Constants {
 	public static final int ROAD_HORIZONTAL_SEPARATION = 50;
 
 	public static final double RADIUS_OF_INFLUENCE = 150;
-	public static final double RADIUS_OF_DISCOMFORT = 50;
+	public static final double RADIUS_OF_DISCOMFORT = 75;
 	
 	public static final double MINIMUM_SPEED = 2;
 	public static final double MAXIMUM_SPEED = 20;

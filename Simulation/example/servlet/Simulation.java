@@ -15,7 +15,7 @@ public class Simulation {
 	public Simulation() {
 		boids = new ArrayList<Boid>();
 		addBoid("" + boids.size(), 500, 500, 25, 25, 10, 0);
-		for (int z = 0; z < 50; z++) {
+		for (int z = 0; z < 75; z++) {
 			addBoid();
 		}
 
