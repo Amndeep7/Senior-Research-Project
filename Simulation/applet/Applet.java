@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2012 Amndeep Singh Mann <Amndeep.dev@gmail.com> Please read License.txt for full license information.
+*/
+
 package applet;
 
 import java.awt.Dimension;
@@ -42,7 +46,11 @@ public class Applet extends JApplet {
 		error = message;
 	}
 
-	/**
+	/*
+	 * This method is directly copied from Frank Buß (fb@frank-buss.de)'s "Echo" example, as provided here http://www.frank-buss.de/echoservlet/index.html. Used with permission
+	 * from creator.
+	 */
+	/*
 	 * Get a connection to the servlet.
 	 */
 	private URLConnection getServletConnection() throws MalformedURLException, IOException {
