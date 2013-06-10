@@ -5,19 +5,19 @@
 <web-app>
 
     <!-- General description of my web application -->
-    <display-name>Simulation Servlet</display-name>
+    <display-name>Framework Servlet</display-name>
     <description>
-    Simulation Servlet
+    Framework Servlet
     </description>
 
     <!-- define servlets and mapping -->
     <servlet>
-        <servlet-name>simulation</servlet-name>
+        <servlet-name>framework</servlet-name>
         <servlet-class>example.servlet.ExampleServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>simulation</servlet-name>
-        <url-pattern>/simulation</url-pattern>
+        <servlet-name>framework</servlet-name>
+        <url-pattern>/framework</url-pattern>
     </servlet-mapping>
 
 </web-app>

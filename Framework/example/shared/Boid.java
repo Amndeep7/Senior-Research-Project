@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2012 Amndeep Singh Mann <Amndeep.dev@gmail.com> Please read License.txt for full license information.
-*/
+ * Copyright (c) 2012 Amndeep Singh Mann <Amndeep.dev@gmail.com> Please read License.txt for full license information.
+ */
 
 package example.shared;
 
@@ -120,7 +120,7 @@ public class Boid implements Serializable {
 			boolean foundDiscomfortableNeighbors = false;
 			double aveSpeed = 0;
 
-		for (Boid b : neighbors) {
+			for (Boid b : neighbors) {
 				if (!foundDiscomfortableNeighbors && inDiscomfortRadius(b)) {
 					foundDiscomfortableNeighbors = true;
 				}
@@ -130,7 +130,7 @@ public class Boid implements Serializable {
 
 			double delta = 0.70 * (speed - aveSpeed);
 
-			speed = foundDiscomfortableNeighbors ? speed + 1.25*delta : speed - delta;
+			speed = foundDiscomfortableNeighbors ? speed + 1.25 * delta : speed - delta;
 		}
 
 		speed += (Math.random() < 0.6 ? -1 : 1) * Math.random() * 0.15;
@@ -139,11 +139,10 @@ public class Boid implements Serializable {
 			speed *= -1;
 			angle += Math.PI;
 		}
-		
-		if(speed < Constants.MINIMUM_SPEED){
+
+		if (speed < Constants.MINIMUM_SPEED) {
 			speed = Constants.MINIMUM_SPEED;
-		}
-		else if(speed > Constants.MAXIMUM_SPEED){
+		} else if (speed > Constants.MAXIMUM_SPEED) {
 			speed = Constants.MAXIMUM_SPEED;
 		}
 	}
@@ -161,9 +160,9 @@ public class Boid implements Serializable {
 			}
 			aveAngle /= neighbors.size();
 
-			double delta = 0.99*(angle - aveAngle);
+			double delta = 0.99 * (angle - aveAngle);
 
-			angle = foundDiscomfortableNeighbors ? angle + 1.25*delta : angle - delta;
+			angle = foundDiscomfortableNeighbors ? angle + 1.25 * delta : angle - delta;
 		}
 
 		angle += (Math.random() < 0.5 ? -1 : 1) * Math.random() * Math.PI / 3;

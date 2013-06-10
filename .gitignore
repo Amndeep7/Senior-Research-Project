@@ -1,14 +1,14 @@
 #Binaries
-Simulation/applet/*.class
-Simulation/servlet/*.class
-Simulation/shared/*.class
-Simulation/experimentation/*.class
-Simulation/example/*/*.class
+Framework/applet/*.class
+Framework/servlet/*.class
+Framework/shared/*.class
+Framework/experimentation/*.class
+Framework/example/*/*.class
 
 #Personal
-Simulation/experimentation
-Simulation/experimentation/*
-Simulation/experimentation/text/*
+Framework/experimentation
+Framework/experimentation/*
+Framework/experimentation/text/*
 
 #Git
 .gitignore~
@@ -17,6 +17,6 @@ Simulation/experimentation/text/*
 .metadata/
 .metadata/*
 .metadata/.*
-Simulation/java.policy.applet
-Simulation/applet/java.policy.applet
-Simulation/applet.Applet1357446806811.html
+Framework/java.policy.applet
+Framework/applet/java.policy.applet
+Framework/applet.Applet1357446806811.html

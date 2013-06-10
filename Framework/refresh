@@ -13,37 +13,37 @@ javac -g -verbose -sourcepath . example/shared/*.java
 #copying to tomcat
 
 #removing old files but remaking those necessary
-sudo rm -vr /usr/share/tomcat7/webapps/simulation/*
-sudo mkdir -v --parents /usr/share/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo rm -vr /usr/share/tomcat7/webapps/framework/*
+sudo mkdir -v --parents /usr/share/tomcat7/webapps/framework/WEB-INF/classes/
 
 #copying framework to tomcat
 #applet
-sudo cp -av --parents applet /usr/share/tomcat7/webapps/simulation/
+sudo cp -av --parents applet /usr/share/tomcat7/webapps/framework/
 #servlet
-sudo cp -av --parents servlet /usr/share/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp -av --parents servlet /usr/share/tomcat7/webapps/framework/WEB-INF/classes/
 #shared
-sudo cp -av --parents shared /usr/share/tomcat7/webapps/simulation/WEB-INF/classes/
-sudo cp -av --parents shared /usr/share/tomcat7/webapps/simulation/
+sudo cp -av --parents shared /usr/share/tomcat7/webapps/framework/WEB-INF/classes/
+sudo cp -av --parents shared /usr/share/tomcat7/webapps/framework/
 
 #copying my applet/servlet to tomcat
 #website
-sudo cp -av index.html /usr/share/tomcat7/webapps/simulation/
-sudo cp -av web.xml /usr/share/tomcat7/webapps/simulation/WEB-INF/
+sudo cp -av index.html /usr/share/tomcat7/webapps/framework/
+sudo cp -av web.xml /usr/share/tomcat7/webapps/framework/WEB-INF/
 #my applet
-sudo cp -av --parents example/applet /usr/share/tomcat7/webapps/simulation/
+sudo cp -av --parents example/applet /usr/share/tomcat7/webapps/framework/
 #my servlet
-sudo cp -av --parents example/servlet /usr/share/tomcat7/webapps/simulation/WEB-INF/classes/
+sudo cp -av --parents example/servlet /usr/share/tomcat7/webapps/framework/WEB-INF/classes/
 #my shared
-sudo cp -av --parents example/shared /usr/share/tomcat7/webapps/simulation/WEB-INF/classes/
-sudo cp -av --parents example/shared /usr/share/tomcat7/webapps/simulation/
+sudo cp -av --parents example/shared /usr/share/tomcat7/webapps/framework/WEB-INF/classes/
+sudo cp -av --parents example/shared /usr/share/tomcat7/webapps/framework/
 
 #start up tomcat (default is off)
 sudo sh /usr/share/tomcat7/bin/catalina.sh start &
 
 #view website
-#chromium-browser localhost:8080/simulation/index.html
-sleep 0.5
-firefox -new-window localhost:8080/simulation/index.html
+#chromium-browser localhost:8080/framework/index.html
+sleep 1.0
+firefox -new-window localhost:8080/framework/index.html
 cat
 
 #shutdown tomcat (return to default)
